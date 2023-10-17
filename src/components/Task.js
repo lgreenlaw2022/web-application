@@ -1,9 +1,11 @@
-export default function Task() {
+import React from "react";
+import "./css/Task.css";
+
+export default function Task({ taskName }) {
     return (
-        <div>
-            {/* LATER: use conditional formatting later */}
-            <p>{taskname}</p>
-            {/* TODO: for task in list.tasks: make a task component, add  */}
+        <div className="task-container">
+            <input type="checkbox" />
+            <p className="task-name">{taskName}</p>
         </div>
     );
 }

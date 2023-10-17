@@ -6,30 +6,45 @@ from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 CORS(app, support_credentials=True)
+# should this just be the env, base url ??
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///web-app.db"
 db = SQLAlchemy(app)
 
-# task_model = api.model(
-#     "Task",
-#     {
-#         "id": fields.Integer(readonly=True, description="The task unique identifier"),
-#         "title": fields.String(required=True, description="Task title"),
-#         "status": fields.String(
-#             required=True, description="Task status"
-#         ),  # Done or not done -- indicates styling
-#         "subtasks": fields.List(fields.Nested("Subtask")),
-#     },
-# )
-
 
 # TODO: make a separate models folder?
+class User(db.Model):
+    __tablename__ = "user"
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+
+    def __init__(self, username, email, password):
+        self.username = username
+        self.email = email
+        self.password = password
+
+
 class List(db.Model):
     __tablename__ = "list"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    tasks = db.relationship("Task", backref="list", lazy=True)
 
-    __table_args__ = db.UniqueConstraint("id", name="list_id_unique")
+    def __init__(self, name):
+        self.name = name
+
+
+class UserList(db.Model):
+    __tablename__ = "user_list"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    list_id = db.Column(db.Integer, db.ForeignKey("list.id"), nullable=False)
+    user = db.relationship("User", backref=db.backref("user_lists", lazy=True))
+    list = db.relationship("List", backref=db.backref("user_lists", lazy=True))
+
+    def __init__(self, user, list):
+        self.user = user
+        self.list = list
 
 
 class Task(db.Model):
@@ -37,12 +52,19 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     status = db.Column(db.String(20), default="To Do")
+    parent_id = db.Column(db.Integer, db.ForeignKey("task.id"))
     subtasks = db.relationship(
         "Task", backref=db.backref("parent_task", remote_side=[id])
     )
     list_id = db.Column(db.Integer, db.ForeignKey("list.id"), nullable=False)
+    list = db.relationship("List", backref=db.backref("tasks", lazy=True))
 
     __table_args__ = db.UniqueConstraint("id", name="task_id_unique")
+
+    def __init__(self, *args, **kwargs):
+        super(Task, self).__init__(*args, **kwargs)
+        if self.parent_task:
+            self.list_id = self.parent_task.list_id
 
 
 @app.route("/", methods=["GET"])
@@ -55,17 +77,35 @@ def get_tasks():
     return jsonify({"tasks": task_list})
 
 
+@app.route("/users/<int:user_id>/lists", methods=["GET"])
+def get_lists_for_user(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    lists = [
+        list.to_dict()
+        for list in List.query.join(UserList).filter(UserList.user_id == user_id)
+    ]
+    return jsonify({"data": lists})
+
+
 # create a new list
 @app.route("/addlist", methods=["POST", "OPTIONS"])
 @cross_origin(supports_credentials=True)
 def create_list():
     data = request.get_json()
     name = data.get("name")
-    # Assume that there are no tasks in the list
+    user_id = data.get("user_id")
 
     if not name:
         return jsonify({"error": "Name is required"}), 400
-    new_list = List(name=name)
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    new_list = List(name=name, user=user)
 
     db.session.add(new_list)
     db.session.commit()
