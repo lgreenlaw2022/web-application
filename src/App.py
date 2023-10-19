@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS, cross_origin
+from flask_migrate import Migrate
+
 
 # from flask_restx import Api, Resource, fields
 
@@ -9,72 +11,24 @@ CORS(app, support_credentials=True)
 # should this just be the env, base url ??
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///web-app.db"
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
-
-# TODO: make a separate models folder?
-class User(db.Model):
-    __tablename__ = "user"
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
-
-    def __init__(self, username, email, password):
-        self.username = username
-        self.email = email
-        self.password = password
-
-
-class List(db.Model):
-    __tablename__ = "list"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-
-    def __init__(self, name):
-        self.name = name
-
-
-class UserList(db.Model):
-    __tablename__ = "user_list"
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    list_id = db.Column(db.Integer, db.ForeignKey("list.id"), nullable=False)
-    user = db.relationship("User", backref=db.backref("user_lists", lazy=True))
-    list = db.relationship("List", backref=db.backref("user_lists", lazy=True))
-
-    def __init__(self, user, list):
-        self.user = user
-        self.list = list
-
-
-class Task(db.Model):
-    __tablename__ = "task"
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    status = db.Column(db.String(20), default="To Do")
-    parent_id = db.Column(db.Integer, db.ForeignKey("task.id"))
-    subtasks = db.relationship(
-        "Task", backref=db.backref("parent_task", remote_side=[id])
-    )
-    list_id = db.Column(db.Integer, db.ForeignKey("list.id"), nullable=False)
-    list = db.relationship("List", backref=db.backref("tasks", lazy=True))
-
-    __table_args__ = db.UniqueConstraint("id", name="task_id_unique")
-
-    def __init__(self, *args, **kwargs):
-        super(Task, self).__init__(*args, **kwargs)
-        if self.parent_task:
-            self.list_id = self.parent_task.list_id
+from Models import User, List, Task, UserList
 
 
 @app.route("/", methods=["GET"])
 def get_tasks():
-    tasks = Task.query.all()
-    task_list = [
-        {"title": task.title, "status": task.status, "subtasks": task.subtasks}
-        for task in tasks
-    ]
-    return jsonify({"tasks": task_list})
+    return "Welcome to the task manager application!"
+
+
+# @app.route("/", methods=["GET"])
+# def get_tasks():
+#     tasks = Task.query.all()
+#     task_list = [
+#         {"title": task.title, "status": task.status, "subtasks": task.subtasks}
+#         for task in tasks
+#     ]
+#     return jsonify({"tasks": task_list})
 
 
 @app.route("/users/<int:user_id>/lists", methods=["GET"])

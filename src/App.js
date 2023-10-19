@@ -15,25 +15,25 @@ export default function App() {
       <BrowserRouter>
         <ApiProvider>
           <UserProvider>
-          <Header />
-          <Routes>
-            <Route path="/login" element={
-              <PublicRoute><LoginPage /></PublicRoute>
-            } />
-            <Route path="/register" element={
-              <PublicRoute><RegistrationPage /></PublicRoute>
-            } />
-            <Route path="*" element={
-              <PrivateRoute>
-                <Routes>
-                <Route path="/" element={<ListsPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegistrationPage />} />
-                <Route path="*" element={<Navigate to="/" />} />
-                </Routes>
-              </PrivateRoute>
-            }/>
-          </Routes>
+            <Header />
+            <Routes>
+              <Route path="/login" element={
+                <PublicRoute><LoginPage /></PublicRoute>
+              } />
+              <Route path="/register" element={
+                <PublicRoute><RegistrationPage /></PublicRoute>
+              } />
+              <Route path="*" element={
+                <PrivateRoute>
+                  <Routes>
+                  <Route path="/" element={<ListsPage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/register" element={<RegistrationPage />} />
+                  <Route path="*" element={<Navigate to="/" />} />
+                  </Routes>
+                </PrivateRoute>
+              }/>
+            </Routes>
           </UserProvider>
         </ApiProvider>
       </BrowserRouter>

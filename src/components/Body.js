@@ -3,31 +3,35 @@ import { useApi } from "../contexts/ApiProvider";
 import "./css/Body.css";
 import Lists from "./List";
 import WriteTask from "./WriteTask";
+import WriteList from "./WriteList";
+import { useUser } from '../contexts/UserProvider';
 
-export default function Body({ userId, write }) {
+export default function Body({ loggedInUser, write }) {
     const [lists, setLists] = useState([]);
-    const api = useApi();
+    // const [user, setUser] = useState();
+    // const api = useApi();
+    // const { user: loggedInUser } = useUser();
 
-    useEffect(() => {
-        (async () => {
-            const response = await api.get(`/users/${userId}/lists`);
-            if (response.ok) {
-                setLists(response.body.data);
-            } else {
-                console.log(response.error);
-            }
-        })();
-    }, [api, userId]);
+    // useEffect(() => {
+    //     (async () => {
+    //       const response = await api.get(`/users/${loggedInUser.user_id}/lists`);
+    //       if (response.ok) {
+    //         setUser(response.body);
+    //       } else {
+    //         setUser(null);
+    //       }
+    //     })();
+    //   }, [api, loggedInUser]);
 
-    const showTask = (newTask) => {
-        setTasks([newTask, ...tasks]); //TODO: need to make this add to the write user's list and everything
+    const showList = (newList) => {
+        setLists([newList, ...lists]); //TODO: need to make this add to the write user's list and everything
     };
 
     return (
         <div className="body-container">
-            {write && <Write showTask={showTask} />}
+            {write && <WriteList showList={showList} />}
             {lists.map((list) => (
-                <Lists key={list.id} list={list} />
+                <Lists key={list.id} list={list} user={loggedInUser}/>
             ))}
         </div>
     );

@@ -1,20 +1,38 @@
+import { useState, useEffect } from 'react';
+import { useApi } from '../contexts/ApiProvider';
 import PageHeader from "../components/PageHeader";
 import Body from "../components/Body";
+import { useUser } from '../contexts/UserProvider';
 
 export default function ListsPage() {
+    const [user, setUser] = useState();
+    const api = useApi();
+    const { user: loggedInUser } = useUser();
+
+    useEffect(() => {
+        (async () => {
+          const response = await api.get(`/users/${loggedInUser.user_id}/lists`);
+          if (response.ok) {
+            setUser(response.body);
+          } else {
+            setUser(null);
+          }
+        })();
+      }, [api, loggedInUser]);
+      
     return (
         <div>
             <PageHeader />
-            {user === undefined ?
+            {loggedInUser === undefined ?
                 <div className="spinner-border" role="status">
                     <span className="sr-only">Loading...</span>
                 </div>
             :
                 <>
-                    {user === null ?
+                    {loggedInUser === null ?
                         <p>User not found.</p>
                     :
-                    <Body user_id={user.user_id} write={true}/>
+                    <Body loggedInUser={user} write={true}/>
                     }
                 </>
             }

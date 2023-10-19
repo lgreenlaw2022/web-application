@@ -1,68 +1,73 @@
-import { useState, useEffect, useRef } from 'react';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
+import { useState, useRef } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useUser } from '../contexts/UserProvider';
 import Body from '../components/Body';
 import InputField from '../components/InputField';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useUser } from '../contexts/UserProvider';
+import { Button, Form} from 'react-bootstrap';
 
 export default function LoginPage() {
-  const [formErrors, setFormErrors] = useState({});
-  const usernameField = useRef();
-  const passwordField = useRef();
+    const [formErrors, setFormErrors] = useState({});
+    const { login } = useUser();
+    const { location } = useUser();
+    const navigate = useNavigate();
+    const usernameField = useRef(null);
+    const passwordField = useRef(null);
 
-  const { login } = useUser();
-  const navigate = useNavigate();
-  const location = useLocation();
+    const onSubmit = async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const username = formData.get('username');
+        const password = formData.get('password');
+        const errors = {};
 
-  useEffect(() => {
-    usernameField.current.focus();
-  }, []);
-
-  const onSubmit = async (ev) => {
-    ev.preventDefault();
-    const username = usernameField.current.value;
-    const password = passwordField.current.value;
-
-    const errors = {};
-    if (!username) {
-      errors.username = 'Username must not be empty.';
-    }
-    if (!password) {
-      errors.password = 'Password must not be empty.';
-    }
-    setFormErrors(errors);
-    if (Object.keys(errors).length > 0) {
-      return;
-    }
-
-    const result = await login(username, password);
-        if (result === 'fail') {
-            console.log('Invalid username or password', 'danger');
+        if (!username) {
+            errors.username = 'Username or email address is required';
         }
-        else if (result === 'ok') {
+
+        if (!password) {
+            errors.password = 'Password is required';
+        }
+
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            return;
+        }
+
+        const result = await login(username, password);
+
+        if (result.error) {
+            setFormErrors({ non_field_errors: result.error });
+        } else {
             let next = '/';
             if (location.state && location.state.next) {
                 next = location.state.next;
             }
             navigate(next);
-    }
-};
+        }
 
-  return (
-    <Body>
-      <h1>Login</h1>
-      <Form onSubmit={onSubmit}>
-        <InputField
-          name="username" label="Username or email address"
-          error={formErrors.username} fieldRef={usernameField} />
-        <InputField
-          name="password" label="Password" type="password"
-          error={formErrors.password} fieldRef={passwordField} />
-        <Button variant="primary" type="submit">Login</Button>
-      </Form>
-      <hr />
-      <p>Don&apos;t have an account? <Link to="/register">Register here</Link>!</p>
-    </Body>
-  );
+        if (usernameField.current) {
+            usernameField.current.focus();
+        }
+
+        if (passwordField.current) {
+            passwordField.current.focus();
+        }
+    };
+
+    return (
+        <div>
+            <h1>Login</h1>
+            <Form onSubmit={onSubmit}>
+                <InputField
+                    name="username" label="Username or email address"
+                    error={formErrors.username} fieldRef={usernameField} />
+                <InputField
+                    name="password" label="Password" type="password"
+                    error={formErrors.password} fieldRef={passwordField} />
+                <Button variant="primary" type="submit">Login</Button>
+            </Form>
+            <hr />
+            <p>Don&apos;t have an account? <Link to="/register">Register here</Link>!</p>
+        </div>
+    );
 };
