@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useUser } from '../contexts/UserProvider';
 import Body from '../components/Body';
 import InputField from '../components/InputField';
-import { Button, Form} from 'react-bootstrap';
+import { Button, Form, Alert} from 'react-bootstrap';
 
 export default function LoginPage() {
     const [formErrors, setFormErrors] = useState({});
@@ -35,10 +35,12 @@ export default function LoginPage() {
 
         const result = await login(username, password);
 
+        //TODO: need to make a get request hrz
         if (result.error) {
             setFormErrors({ non_field_errors: result.error });
         } else {
-            let next = '/';
+            setFormErrors({});
+            let next = '/users/${loggedInUser.user_id}';
             if (location.state && location.state.next) {
                 next = location.state.next;
             }
@@ -57,6 +59,9 @@ export default function LoginPage() {
     return (
         <div>
             <h1>Login</h1>
+            {formErrors.non_field_errors === 'No account found with that username or email address' && (
+                <Alert variant="warning">No account found with that username or email address. Please register.</Alert>
+            )}
             <Form onSubmit={onSubmit}>
                 <InputField
                     name="username" label="Username or email address"

@@ -10,7 +10,7 @@ export default function UserProvider({ children }) {
   useEffect(() => {
     (async () => {
       if (api.isAuthenticated()) {
-        const response = await api.get('/me');
+        const response = await api.get('/me'); //TODO: change path to /users/${loggedInUser.user_id}
         setUser(response.ok ? response.body : null);
       }
       else {

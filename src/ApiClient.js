@@ -36,12 +36,12 @@ export default class ApiClient {
     }
 
     return {
-    ok: response.ok,
-    status: response.status,
-    body: response.status !== 204 ? await response.json() : null
+        ok: response.ok,
+        status: response.status,
+        body: response.status !== 204 ? await response.json() : null
     };
     }
-
+    
     async login(username, password) {
         const response = await this.post('/tokens', null, {
         headers: {
@@ -55,10 +55,10 @@ export default class ApiClient {
         return 'ok';
     }
 
-    async logout() {
-        await this.delete('/tokens');
-        localStorage.removeItem('accessToken');
-    }
+    // async logout() {
+    //     await this.delete('/tokens');
+    //     localStorage.removeItem('accessToken');
+    // }
 
     isAuthenticated() {
         return localStorage.getItem('accessToken') !== null;
