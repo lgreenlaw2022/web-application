@@ -1,11 +1,12 @@
-import React, {useState, useEffect} from "react";
-import { useApi } from '../contexts/ApiProvider';
+import React, { useState, useEffect } from "react";
+import { useApi } from "../contexts/ApiProvider";
 import Task from "./Task";
 import "./css/List.css";
 
 export default function List({ proplist }) {
     const [tasks, setTasks] = useState([]);
     const api = useApi();
+
     console.log(proplist.name)
     List.defaultProps = {
         tasks: [
@@ -19,24 +20,55 @@ export default function List({ proplist }) {
         const fetchTasks = async () => {
             const response = await api.get(`/lists/${proplist.id}/tasks`);
             if (response.ok) {
-                setTasks(response.data);
+                const tasks = response.data;
+                for (const task of tasks) {
+                    const subtasksResponse = await api.get(`/tasks?parentId=${task.id}`);
+                    if (subtasksResponse.ok) {
+                        task.subtasks = subtasksResponse.data;
+                        for (const subtask of task.subtasks) {
+                            const subsubtasksResponse = await api.get(
+                                `/tasks?parentId=${subtask.id}`
+                            );
+                            if (subsubtasksResponse.ok) {
+                                subtask.subtasks = subsubtasksResponse.data;
+                            } else {
+                                console.error(subsubtasksResponse.error);
+                            }
+                        }
+                    } else {
+                        console.error(subtasksResponse.error);
+                    }
+                }
+                setTasks(tasks);
             } else {
                 console.error(response.error);
             }
         };
         fetchTasks();
-    }, [proplist]); // proplist.id
-
+    }, [proplist]);
 
     return (
         <div className="lists-container">
-            {/* <p>{proplist.id}HLLO</p> */}
             <h3 className="lists-heading">{proplist.name}</h3>
-            {/* TODO: this will need to make the databse call to get the tasks for the list */}
             <div>
-                {/* TODO: make this work with the prop */}
                 {List.defaultProps.tasks.map((task) => (
-                    <Task key={task.id} className="lists-task" task={task}/>
+                    <div key={task.id}>
+                        <Task className="lists-task" task={task} />
+                        {/* {task.subtasks &&
+                            task.subtasks.map((subtask) => (
+                                <div key={subtask.id}>
+                                    <Task className="lists-task" task={subtask} />
+                                    {subtask.subtasks &&
+                                        subtask.subtasks.map((subsubtask) => (
+                                            <Task
+                                                key={subsubtask.id}
+                                                className="lists-task"
+                                                task={subsubtask}
+                                            />
+                                        ))}
+                                </div>
+                            ))} */}
+                    </div>
                 ))}
             </div>
         </div>

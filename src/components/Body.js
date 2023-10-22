@@ -48,10 +48,13 @@ export default function Body({ loggedInUser}) {
     //     })();
     //   }, [api, loggedInUser]);
 
+    
+    
+
     const showList = (newList) => {
         setLists([newList, ...lists]); //TODO: need to make this add to the write user's list and everything
     };
-    
+
     console.log('lists:', lists);
     console.log('user', Body.defaultProps.loggedInUser)
     console.log("df users", !Body.defaultProps.def_lists)
@@ -62,7 +65,8 @@ export default function Body({ loggedInUser}) {
             <p>hello {Body.defaultProps.loggedInUser.username}</p>
             {Body.defaultProps.def_lists && Body.defaultProps.def_lists.map((def_list) => (
                 <div>
-                    <List proplist={def_list} user={loggedInUser}/>
+                    <List proplist={def_list} user={loggedInUser} /> {/* onTaskMove={moveTask} */}
+                    
                 </div>
             ))}
         </div>

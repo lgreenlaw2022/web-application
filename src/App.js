@@ -11,6 +11,8 @@ import Body from './components/Body';
 
 //TODO: make tabs consistent size for all files
 export default function App() {
+
+  
   return (
     <div className="App">
       <BrowserRouter>
