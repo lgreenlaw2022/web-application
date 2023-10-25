@@ -5,31 +5,22 @@ import Body from "../components/Body";
 import { useUser } from '../contexts/UserProvider';
 
 export default function ListsPage() {
-    const [user, setUser] = useState();
+    // const [user, setUser] = useState();
     const api = useApi();
-    const { user: loggedInUser } = useUser();
-
-    useEffect(() => {
-        (async () => {
-          const response = await api.get(`/users/${loggedInUser.user_id}/lists`);
-          if (response.ok) {
-            setUser(response.body);
-          } else {
-            setUser(null);
-          }
-        })();
-      }, [api, loggedInUser]);
+    const { user } = useUser();
       
     return (
         <div>
+            {console.log('rendering ListsPage component')}
             <PageHeader />
-            {loggedInUser === undefined ?
+            {console.log('user', user)}
+            {user === undefined ?
                 <div className="spinner-border" role="status">
                     <span className="sr-only">Loading...</span>
                 </div>
             :
                 <>
-                    {loggedInUser === null ?
+                    {user === null ?
                         <p>User not found.</p>
                     :
                     <Body loggedInUser={user} write={true}/>

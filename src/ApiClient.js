@@ -2,7 +2,7 @@ const BASE_API_URL = process.env.REACT_APP_BASE_API_URL;
 
 export default class ApiClient {
     constructor() {
-        this.base_url =  BASE_API_URL + '/api';
+        this.base_url =  BASE_API_URL;
     }
 
     async request(options) {
@@ -43,11 +43,11 @@ export default class ApiClient {
     }
     
     async login(username, password) {
-        const response = await this.post('/tokens', null, {
-        headers: {
-            Authorization:  'Basic ' + btoa(username + ":" + password)
-        }
-        });
+        console.log(username, password)
+        const response = await this.post('/auth/login', JSON.stringify({
+            userData: username,
+            password
+        }));
         if (!response.ok) {
         return response.status === 401 ? 'fail' : 'error';
         }

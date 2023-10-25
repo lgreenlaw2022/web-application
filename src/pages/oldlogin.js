@@ -15,7 +15,6 @@ export default function LoginPage() {
     const usernameField = useRef(null);
     const passwordField = useRef(null);
     // const user = useUser();
-    const { user, login, logout } = useUser();
     const api = useApi();
 
 
@@ -39,26 +38,24 @@ export default function LoginPage() {
             return;
         }
 
-        const result = await login(username, password); //changed this from going directly to login
-        // Set the current user in the UserProvider component
+        // const result = await api.login(username, password);
+        // // Set the current user in the UserProvider component
+        // console.log(result)
         
-        console.log("login submit rtesutl", result)
 
-        //TODO: need to make a get request hrz
-        if (result === undefined) {
-            console.log("result is undefined")
-        }
-        else if ( result.error) {
-            setFormErrors({ non_field_errors: result.error });
-        } else {
-            setFormErrors({});
-            // UserProvider.set_current_user(user.id)
-            let next = '/';
-            // if (location.state && location.state.next) {
-            //     next = location.state.next;
-            // }
-            navigate(next);
-        }
+        // //TODO: need to make a get request hrz
+        // if (result.error) {
+        //     setFormErrors({ non_field_errors: result.error });
+        // } else {
+        //     setFormErrors({});
+        //     // UserProvider.set_current_user(user.id)
+            
+        //     let next = '/';
+        //     // if (location.state && location.state.next) {
+        //     //     next = location.state.next;
+        //     // }
+        //     navigate(next);
+        // }
 
         if (usernameField.current) {
             usernameField.current.focus();
@@ -70,10 +67,13 @@ export default function LoginPage() {
     };
 
     return (
+        
         <div>
+            {console.log('Rendering LoginPage component')}
             <h1>Login</h1>
             {formErrors.non_field_errors === 'No account found with that username or email address' && (
-                <Alert variant="warning">No account found with that username or email address. Please register.</Alert>
+                <Alert variant="warning">No account found with that username or email address. 
+                Please register.</Alert>
             )}
             <Form onSubmit={onSubmit}>
                 <InputField

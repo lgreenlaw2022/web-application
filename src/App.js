@@ -17,12 +17,14 @@ export default function App() {
     <div className="App">
       <BrowserRouter>
         <ApiProvider>
+          {console.log('Rendering ApiProvider component')}  
           <UserProvider>
+            {console.log('Rendering UserProvider component')}
             <Header />
             <Routes>
+              {console.log('Rendering route component')}
               <Route path="/login" element={ 
-              //TODO: REMOVE BODY LATER FOR DEV ONLY
-                <PublicRoute><Body /></PublicRoute>
+                <PublicRoute><LoginPage /></PublicRoute>
               } />
               <Route path="/register" element={
                 <PublicRoute><RegistrationPage /></PublicRoute>
@@ -33,15 +35,17 @@ export default function App() {
                 </PublicRoute>
               } /> */}
               <Route path="*" element={
-                <PrivateRoute>
+                <PublicRoute>
+                  {/* <PrivateRoute> */}
                   <Routes>
                     {/* TODO: fix  */}
-                    <Route path="/" element={<ListsPage />} /> 
+                    <Route path="/" element={<ListsPage/>}/> 
                     {/* <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegistrationPage />} /> */}
                     <Route path="*" element={<Navigate to="/" />} />
                   </Routes>
-                </PrivateRoute>
+                  {/* </PrivateRoute> */}
+                </PublicRoute> 
               }/>
             </Routes>
           </UserProvider>

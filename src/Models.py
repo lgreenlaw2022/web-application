@@ -1,10 +1,14 @@
-from App import db
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 
 class User(db.Model):
     __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
+    username = db.Column(
+        db.String(50), unique=True, nullable=False
+    )  # TODO should this have a unique constraint?
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
 
@@ -12,6 +16,14 @@ class User(db.Model):
         self.username = username
         self.email = email
         self.password = password
+
+    def to_dict(self):
+        return {
+            "user_id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "password": self.password.decode("utf-8"),
+        }
 
 
 class Task(db.Model):

@@ -4,7 +4,7 @@ import { useApi } from '../contexts/ApiProvider';
 import MoveTaskForm from "./MoveTask";
 
 
-export default function Task({ task, onTaskDelete }) {
+export default function Task({ task, onTaskDelete, onArrowClick }) {
     const api = useApi();
     const [deleted, setDeleted] = useState(false);
     const [showMoveForm, setShowMoveForm] = useState(false);
@@ -43,6 +43,9 @@ export default function Task({ task, onTaskDelete }) {
 
     const handleDelete = async () => {
         const response = await api.delete(`/tasks/${task.id}`);
+
+        // TODO: on handle delete should all of the subtasks be deleted as well? or can they just be hidden?
+        
         if (response.ok) {
             // TODO: want to make it so that it is hidden from the list and then deleted on refresh
             setDeleted(true);
@@ -51,6 +54,10 @@ export default function Task({ task, onTaskDelete }) {
         } else {
             console.error(response.error);
         }
+    };
+
+    const handleArrowClick = () => {
+        onArrowClick(task.id);
     };
 
     const handleMouseEnter = () => {
@@ -66,7 +73,13 @@ export default function Task({ task, onTaskDelete }) {
         <div className="task-container"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}>
-                
+            <div className="arrow-container" onClick={handleArrowClick}>
+                {/* HARD CODED */}
+                <i className="fas fa-chevron-right">{"v"}</i>
+                {/* {task.subtasks && task.subtasks.length > 0 && (
+                <i className="fas fa-chevron-right"></i>
+                )} */}
+            </div>    
             <input type="checkbox" onClick={handleDelete}/>
             <span>{task.title}</span>
             {/* <button >Delete</button> */}

@@ -4,41 +4,41 @@ import { useApi } from './ApiProvider';
 const UserContext = createContext();
 
 export default function UserProvider({ children }) {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
   const api = useApi();
 
-  useEffect(() => {
-    (async () => {
-      if (api.isAuthenticated()) {
-        const response = await api.get('/me'); //TODO: change path to /users/${loggedInUser.user_id}
-        setUser(response.ok ? response.body : null);
-      }
-      else {
-        setUser(null);
-      }
-    })();
-  }, [api]);
+  const login = async (userData, password) => {
+    try {
+      // Perform an API call to validate credentials and retrieve user data.
+      // Replace this with your actual API call.
+      const response = await api.login(userData, password);
+      console.log("api login response", response, response.message, response.user)
 
-  const login = async (username, password) => {
-    const result = await api.login(username, password);
-    if (result === 'ok') {
-      const response = await api.get('/me');
-      setUser(response.ok ? response.body : null);
+      if (response.success) {
+        // If the login is successful, set the user in the state.
+        console.log("login success", response.user)
+        setUser(response.user);
+      } else {
+        // Handle authentication errors here.
+        console.error('Login failed:', response.error);
+      }
+    } catch (error) {
+      // Handle API call errors.
+      console.error('API error:', error);
     }
-    return result;
   };
 
-  const logout = async () => {
-    await api.logout();
+  const logout = () => {
+    // Log out the user by removing the user from the state.
     setUser(null);
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser, login, logout }}>
+    <UserContext.Provider value={{ user, login, logout }}>
       {children}
     </UserContext.Provider>
   );
-}
+};
 
 export function useUser() {
   return useContext(UserContext);
