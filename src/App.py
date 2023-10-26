@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS, cross_origin
 from Models import User, List, Task, UserList, db
 import json
@@ -46,7 +46,10 @@ def get_tasks():
 
 @app.route("/auth/login", methods=["POST"])
 def get_user():
+    print("this is being called")
     data = json.loads(request.get_json())
+    # data = request.get_json()
+
     userData = data["userData"]
     password = data["password"]
     print(userData, password)
@@ -56,7 +59,6 @@ def get_user():
 
     if not password:
         return jsonify({"error": "Password is required"}), 400
-
     user = (
         db.session.query(User)
         .filter(
@@ -64,27 +66,26 @@ def get_user():
         )  # TODO: email probably shouldn't be case sensitive
         .first()
     )
-
+    print(user)
     if user is None:
         return jsonify({"error": "User doesn't exist"}), 400
 
-    # salt = user.password[:29]
-    # input_password = bcrypt.hashpw(password.encode("utf-8"), salt)
-    print()
-    stored_password = user.password
+    stored_password = user.password  # TODO: don't need this
     print("Stored password:", stored_password)
-    print(
-        "Hashed input password:",
-        bcrypt.hashpw(password.encode("utf-8"), stored_password),
-    )
-
+    # print(
+    #     "Hashed input password:",
+    #     bcrypt.hashpw(password.encode("utf-8"), stored_password),
+    # )
     if not bcrypt.checkpw(password.encode("utf-8"), stored_password):
         print("wrong passwrod")
         return jsonify({"error": "Password is wrong"}), 400
 
     db.session.commit()
     print("api successfully logged in user", user.id)
-    return jsonify({"user": user.to_dict(), "message": "User logged in"}), 201
+    print("user dict", user.id, user.username, user.email, user.password)
+    return jsonify({"user": user.id, "message": "User logged in", "success": True}), 201
+    # return jsonify({"user": {"id": user.id}, "message": "User logged in"})
+    # return jsonify({"user": user.to_dict(), "message": "User logged in"}), 201
 
 
 @app.route("/auth/register", methods=["POST"])

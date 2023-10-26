@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiProvider';
 import PageHeader from "../components/PageHeader";
 import Body from "../components/Body";
+import UserProvider from '../contexts/UserProvider';
 import { useUser } from '../contexts/UserProvider';
 
 export default function ListsPage() {

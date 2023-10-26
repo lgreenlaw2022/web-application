@@ -48,15 +48,22 @@ export default function LoginPage() {
         if (result === undefined) {
             console.log("result is undefined")
         }
-        else if ( result.error) {
-            setFormErrors({ non_field_errors: result.error });
-        } else {
-            setFormErrors({});
-            // UserProvider.set_current_user(user.id)
-            let next = '/';
+        else if (result.success === "success") {
+            let next = '/lists';
             // if (location.state && location.state.next) {
             //     next = location.state.next;
             // }
+            console.log('next', next)
+            navigate(next);
+        }
+        else {
+            // setFormErrors({});
+            // UserProvider.set_current_user(user.id)
+            let next = '/lists';
+            // if (location.state && location.state.next) {
+            //     next = location.state.next;
+            // }
+            console.log('next', next)
             navigate(next);
         }
 

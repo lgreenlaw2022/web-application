@@ -39,10 +39,10 @@ export default function App() {
                   {/* <PrivateRoute> */}
                   <Routes>
                     {/* TODO: fix  */}
-                    <Route path="/" element={<ListsPage/>}/> 
+                    <Route path="/lists" element={<ListsPage/>}/> 
                     {/* <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegistrationPage />} /> */}
-                    <Route path="*" element={<Navigate to="/" />} />
+                    <Route path="*" element={<Navigate to="/login" />} />
                   </Routes>
                   {/* </PrivateRoute> */}
                 </PublicRoute> 

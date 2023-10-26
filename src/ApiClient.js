@@ -43,7 +43,8 @@ export default class ApiClient {
     }
     
     async login(username, password) {
-        console.log(username, password)
+        // console.log(username, password)
+        console.log("login api client ##########################################")
         const response = await this.post('/auth/login', JSON.stringify({
             userData: username,
             password
@@ -51,8 +52,9 @@ export default class ApiClient {
         if (!response.ok) {
         return response.status === 401 ? 'fail' : 'error';
         }
-        localStorage.setItem('accessToken', response.body.access_token);
-        return 'ok';
+        // localStorage.setItem('accessToken', response.body.access_token);
+        console.log("api client returns response.body", response.body)
+        return (response.body)
     }
 
     // async logout() {
