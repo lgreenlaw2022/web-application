@@ -23,29 +23,56 @@ export default function List({ list }) {
         }
     };
 
-    useEffect(() => {
-        async function fetchTasks() {
-            const response = await api.get(`/lists/${list["id"]}/tasks`);
-            console.log("retrieved tasks", response, response.body)
-            if (response.ok) {
-                setTasks(response.body);
-            } else {
-                console.error(response.error);
-            }
-        }
-        fetchTasks();
-    }, [list]);
+    const [tasksCache, setTasksCache] = useState({});
 
+    useEffect(() => {
+        const fetchTasks = async () => {
+            if (tasksCache[list.id]) {
+                setTasks(tasksCache[list.id]);
+            } else {
+                const response = await api.get(`/lists/${list.id}/tasks`);
+                if (response.ok) {
+                    const tasks = response.body;
+                    setTasksCache((prevCache) => ({
+                        ...prevCache,
+                        [list.id]: tasks,
+                    }));
+                    setTasks(tasks);
+                } else {
+                    console.error(response.error);
+                }
+            }
+        };
+        fetchTasks();
+    }, [api, list, tasksCache]);
+
+
+
+    // useEffect(() => {
+    //     async function fetchTasks() {
+    //         console.log("trying to get tasks for ", list["id"])
+    //         const response = await api.get(`/lists/${list["id"]}/tasks`);
+    //         console.log("retrieved tasks", response, response.body)
+    //         if (response.ok) {
+    //             setTasks(response.body);
+    //         } else {
+    //             console.error(response.error);
+    //         }
+    //     }
+    //     fetchTasks();
+    // }, [list]);
 
     return (
         <div className="lists-container">
             {console.log("list info passed to list component", list, list.tile)}
             <h4 className="lists-heading">{list.title}</h4>
-            <div>
-                {tasks.map((task) => (
-                    <Task className="lists-task" task={task} onArrowClick={handleTaskArrowClick}/>}
-                )}
-            </div>
+            {tasks.length > 0 && (
+                <div>
+                    {tasks.map((task) => (
+                        <Task className="lists-task" task={task} onArrowClick={handleTaskArrowClick}/>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

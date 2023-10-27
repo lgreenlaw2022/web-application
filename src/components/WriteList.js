@@ -5,12 +5,6 @@ import InputField from './InputField';
 import { useApi } from '../contexts/ApiProvider';
 import { useUser } from '../contexts/UserProvider';
 import "./css/WriteList.css";
-// import CORS from "flask-cors";
-
-// CORS(app, support_credentials=True)
-
-// import dotenv from "dotenv";
-// dotenv.config();
 
 
 export default function WriteList({ showList }) { //TODO: change showPost
@@ -31,16 +25,18 @@ export default function WriteList({ showList }) { //TODO: change showPost
         const title = textField.current.value;
         const response = await api.post('/lists', { title });
         if (response.ok) {
-            const newList = response.body;
-            console.log("new list response", newList);
-            const listId = newList.list_id;
-            const userlistrelationship = { userId: user, listId: listId };
-            const list_response = await api.post('/connecttolist', userlistrelationship);
-            if (list_response.success) {
-                showList(newList); //should this be the id?
+            const newList = response.body[0];
+            console.log("new list response", newList, newList.list_id);
+            const list_Id = newList.list_id;
+            const user_Id = user;
+            const list_response = await api.post('/connecttolist', { user_id: user_Id, list_id: list_Id });
+            console.log("list response", list_response);
+            if (list_response.body.success) {
+                console.log("updating lists list")
+                showList();
                 textField.current.value = '';
             }
-            
+
         } else {
             if (response.body.errors) {
                 setFormErrors(response.body.errors.json);

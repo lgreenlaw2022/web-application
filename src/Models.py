@@ -36,6 +36,7 @@ class Task(db.Model):
 
 class TaskRelationship(db.Model):
     __tablename__ = "task_relationship"
+    # TODO: may need to add the id here rather than having the composite key
     parent_task_id = db.Column(db.Integer, db.ForeignKey("task.id"), primary_key=True)
     child_task_id = db.Column(db.Integer, db.ForeignKey("task.id"), primary_key=True)
 

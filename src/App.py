@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
-from Models import User, List, Task, UserList, ListRelationship, db
+from Models import User, List, Task, UserList, ListRelationship, TaskRelationship, db
 import json
 import bcrypt
 
@@ -52,6 +52,7 @@ def get_tasks(list_id):
 
     # Create a list of dictionaries containing the id and title of each list
     task_data = [{"id": task.id, "title": task.title} for task in tasks]
+    print("task data", task_data)
 
     return jsonify({"tasks": task_data}), 200
 
@@ -67,13 +68,15 @@ def create_list():
     db.session.add(list)
     db.session.commit()
 
-    return jsonify(list.to_dict()), 201
+    return jsonify(list.to_dict(), {"success": True}), 201
 
 
 @app.route("/connecttolist", methods=["POST"])
 def connect_to_list():
-    user_id = request.json.get("userId")
-    list_id = request.json.get("listId")
+    print("___in connect to list___")
+    data = request.get_json()
+    user_id = data.get("user_id")
+    list_id = data.get("list_id")
     if not user_id or not list_id:
         return jsonify({"error": "User ID and List ID are required"}), 400
 
@@ -82,7 +85,75 @@ def connect_to_list():
     db.session.add(relationship)
     db.session.commit()
 
-    return jsonify(relationship.to_dict(), {"success": True}), 201
+    return jsonify({"success": True}), 201
+
+
+@app.route("/tasks", methods=["POST"])
+def add_task():
+    # Get the request data
+    data = request.get_json()
+
+    # Extract the task title and list ID from the request data
+    title = data.get("title")
+
+    # Create a new task object with the extracted data
+    task = Task(title=title)
+
+    # Add the task to the database
+    db.session.add(task)
+    db.session.commit()
+
+    # Return a success response
+    return (
+        jsonify(
+            {"message": "Task added successfully", "success": True, "task_id": task.id}
+        ),
+        201,
+    )
+
+
+@app.route("/list-task-relationship", methods=["POST"])
+def create_list_task_relationship():
+    print("___in create list task relationship___")
+    # Get the request data
+    data = request.get_json()
+
+    # Extract the list ID and task ID from the request data
+    list_id = data.get("list_id")
+    task_id = data.get("task_id")
+
+    # Create a new ListTaskRelationship object with the extracted data
+    relationship = ListRelationship(list_id=list_id, task_id=task_id)
+    print("**************TASK LIST RELATIONSHIP ADDED", relationship)
+
+    # Add the relationship to the database
+    db.session.add(relationship)
+    db.session.commit()
+
+    # Return a success response
+    return jsonify({"message": "List-Task Relationship created", "success": True}), 201
+
+
+@app.route("/task-subtask-relationship", methods=["POST"])
+def create_task_subtask_relationship():
+    # Get the request data
+    data = request.get_json()
+
+    # Extract the parent task ID and child task ID from the request data
+    parent_task_id = data.get("parent_task_id")
+    child_task_id = data.get("child_task_id")
+
+    # Create a new TaskRelationship object with the extracted data
+    relationship = TaskRelationship(
+        parent_task_id=parent_task_id, child_task_id=child_task_id
+    )
+
+    # Add the relationship to the database
+    db.session.add(relationship)
+    db.session.commit()
+
+    # Return a success response
+    return jsonify({"message": "Task-Subtask Relationship created"}), 201
 
 
 @app.route("/auth/login", methods=["POST"])
