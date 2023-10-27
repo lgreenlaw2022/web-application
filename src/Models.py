@@ -79,6 +79,6 @@ class UserList(db.Model):
     user = db.relationship("User", backref=db.backref("user_lists", lazy=True))
     list = db.relationship("List", backref=db.backref("user_lists", lazy=True))
 
-    def __init__(self, user, list):
-        self.user = user
-        self.list = list
+    def __init__(self, user_id, list_id):
+        self.user_id = user_id
+        self.list_id = list_id

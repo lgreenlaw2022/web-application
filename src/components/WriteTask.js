@@ -91,7 +91,7 @@ export default function WriteTask() {
 
     useEffect(() => {
         const fetchLists = async () => {
-            const response = await api.get('/lists');
+            const response = await api.get(`/lists/${user}`);
             if (response.ok) {
                 setLists(response.data);
             } else {

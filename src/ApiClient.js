@@ -17,21 +17,27 @@ export default class ApiClient {
             method: options.method,
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+              "Access-Control-Allow-Origin": "*",
+            //   'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
               ...options.headers,
             },
             body: options.body ? JSON.stringify(options.body) : null,
+            credentials: 'include'
+            // TODO: this fucks up registration
+            // mode: 'no-cors', // This line sets 'no-cors' mode
           });
     }
     catch (error) {
         response = {
             ok: false,
             status: 500,
-            json: async () => { return {
-            code: 500,
-            message: 'The server is unresponsive',
-            description: error.toString(),
-            }; }
+            json: async () => { 
+                return {
+                    code: 500,
+                    message: 'The server is unresponsive',
+                    description: error.toString(),
+                }; 
+            }
         };
     }
 

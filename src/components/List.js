@@ -3,7 +3,7 @@ import { useApi } from "../contexts/ApiProvider";
 import Task from "./Task";
 import "./css/List.css";
 
-export default function List({ proplist }) {
+export default function List({ list }) {
     const [tasks, setTasks] = useState([]);
     const api = useApi();
 
@@ -15,7 +15,7 @@ export default function List({ proplist }) {
     
     const handleTaskArrowClick = (taskId) => {
     // Find the task with the specified ID
-        const task = proplist.tasks.find((t) => t.id === taskId);
+        const task = list.tasks.find((t) => t.id === taskId);
         if (task) {
             // Toggle the subtasks for the task
             task.showSubtasks = !task.showSubtasks;
@@ -23,65 +23,39 @@ export default function List({ proplist }) {
         }
     };
 
-    console.log(proplist.name)
-    List.defaultProps = {
-        tasks: [
-            { id: 1, title: 'Task 1' },
-            { id: 2, title: 'Task 2' },
-            { id: 3, title: 'Task 3' },
-        ],
-        subtasks: [
-            { id: 4, title: 'Subtask 1' },
-            { id: 5, title: 'Subtask 2' },
-            { id: 6, title: 'Subtask 3' },
-        ],
-        subsubtasks: [
-            { id: 7, title: 'Subsubtask 1' },
-            { id: 8, title: 'Subsubtask 2' },
-            { id: 9, title: 'Subsubtask 3' },
-        ]
-    }
-
     useEffect(() => {
-        const fetchTasks = async () => {
-            const response = await api.get(`/lists/${proplist.id}/tasks`);
+        async function fetchTasks() {
+            const response = await api.get(`/lists/${list["id"]}/tasks`);
+            console.log("retrieved tasks", response, response.body)
             if (response.ok) {
-                const tasks = response.data;
-                for (const task of tasks) {
-                    const subtasksResponse = await api.get(`/tasks?parentId=${task.id}`);
-                    if (subtasksResponse.ok) {
-                        task.subtasks = subtasksResponse.data;
-                        for (const subtask of task.subtasks) {
-                            const subsubtasksResponse = await api.get(
-                                `/tasks?parentId=${subtask.id}`
-                            );
-                            if (subsubtasksResponse.ok) {
-                                subtask.subtasks = subsubtasksResponse.data;
-                            } else {
-                                console.error(subsubtasksResponse.error);
-                            }
-                        }
-                    } else {
-                        console.error(subtasksResponse.error);
-                    }
-                }
-                setTasks(tasks);
+                setTasks(response.body);
             } else {
                 console.error(response.error);
             }
-        };
+        }
         fetchTasks();
-    }, [proplist]);
+    }, [list]);
+
 
     return (
         <div className="lists-container">
-            <h3 className="lists-heading">{proplist.name}</h3>
+            {console.log("list info passed to list component", list, list.tile)}
+            <h4 className="lists-heading">{list.title}</h4>
             <div>
-                {List.defaultProps.tasks.map((task) => (
+                {tasks.map((task) => (
+                    <Task className="lists-task" task={task} onArrowClick={handleTaskArrowClick}/>}
+                )}
+            </div>
+        </div>
+    );
+}
+
+
+                {/* {tasks.map((task) => (
                     <div key={task.id}>
                         <Task className="lists-task" task={task} 
                             onArrowClick={handleTaskArrowClick}/>
-                            {/* HARD CODED SUBTASKS */}
+                            
                            { task.showSubtasks && 
                             List.defaultProps.subtasks.map((subtask) => (
                                 <div key={subtask.id}>
@@ -97,7 +71,7 @@ export default function List({ proplist }) {
                                     ))}
                                 </div>
                             ))
-                            }
+                            } */}
                             {/* DYNAMIC SUBTASKS */}
                         {/* {task.subtasks &&
                             task.subtasks.map((subtask) => (
@@ -114,9 +88,5 @@ export default function List({ proplist }) {
                                 </div>
                             ))} */}
 
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-}
+                    {/* </div> */}
+                {/* ))} */}

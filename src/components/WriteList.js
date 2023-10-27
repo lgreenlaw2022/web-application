@@ -13,7 +13,7 @@ import "./css/WriteList.css";
 // dotenv.config();
 
 
-export default function WriteList({ showList, loggedInUserId }) { //TODO: change showPost
+export default function WriteList({ showList }) { //TODO: change showPost
     const [formErrors, setFormErrors] = useState({});
     const textField = useRef();
     const api = useApi();
@@ -34,7 +34,7 @@ export default function WriteList({ showList, loggedInUserId }) { //TODO: change
             const newList = response.body;
             console.log("new list response", newList);
             const listId = newList.list_id;
-            const userlistrelationship = { userId: loggedInUserId, listId: listId };
+            const userlistrelationship = { userId: user, listId: listId };
             const list_response = await api.post('/connecttolist', userlistrelationship);
             if (list_response.success) {
                 showList(newList); //should this be the id?
@@ -50,6 +50,7 @@ export default function WriteList({ showList, loggedInUserId }) { //TODO: change
 
     return (
         <Stack direction="horizontal" gap={3} className="WriteList">
+           { console.log("write list thinkgs user is", user)}
             <Form onSubmit={onSubmit}>
                 <InputField
                 name="text" label="add new list" placeholder="Add list"

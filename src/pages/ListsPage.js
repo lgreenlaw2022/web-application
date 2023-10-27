@@ -25,9 +25,10 @@ export default function ListsPage() {
                     {user === null ?
                         <p>User not found. <Link to="/login">Login</Link></p>
                     :
-                    <Body loggedInUser={user} write={true}/>
+                    <Body write={true}/>
                     }
                 </>
+                
             }
         </div>
     );
