@@ -4,6 +4,7 @@ import PageHeader from "../components/PageHeader";
 import Body from "../components/Body";
 import UserProvider from '../contexts/UserProvider';
 import { useUser } from '../contexts/UserProvider';
+import { useNavigate, Link } from 'react-router-dom';
 
 export default function ListsPage() {
     // const [user, setUser] = useState();
@@ -12,7 +13,7 @@ export default function ListsPage() {
       
     return (
         <div>
-            {console.log('rendering ListsPage component')}
+            {console.log('rendering ListsPage component for user', user)}
             <PageHeader />
             {console.log('user', user)}
             {user === undefined ?
@@ -22,7 +23,7 @@ export default function ListsPage() {
             :
                 <>
                     {user === null ?
-                        <p>User not found.</p>
+                        <p>User not found. <Link to="/login">Login</Link></p>
                     :
                     <Body loggedInUser={user} write={true}/>
                     }

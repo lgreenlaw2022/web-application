@@ -29,19 +29,43 @@ def get_tasks():
 #     return jsonify({"tasks": task_list})
 
 
-# @app.route("/users/<int:user_id>/lists", methods=["GET"])
-# def get_lists_for_user(user_id):
-#     user = User.query.get(user_id)
-#     if not user:
-#         return jsonify({"error": "User not found"}), 404
+@app.route("/lists/<int:user_id>")
+def get_lists(user_id):
+    # user = User.query.get(user_id)
+    if user_id is None:
+        return jsonify({"error": "User not found"}), 404
 
-#     lists = [
-#         list.to_dict()
-#         for list in List.query.join(UserList).filter(
-#             passwordUserList.user_id == user_id
-#         )
-#     ]
-#     return jsonify({"data": lists})
+    lists = List.query.filter_by(user_id=user_id).all()
+    return jsonify([list.to_dict() for list in lists]), 200
+
+
+@app.route("/lists", methods=["POST"])
+def create_list():
+    title = request.json.get("title")
+
+    if not title:
+        return jsonify({"error": "Text is required"}), 400
+
+    list = List(title=title)
+    db.session.add(list)
+    db.session.commit()
+
+    return jsonify(list.to_dict()), 201
+
+
+@app.route("/connecttolist", methods=["POST"])
+def connect_to_list():
+    user_id = request.json.get("userId")
+    list_id = request.json.get("listId")
+    if not user_id or not list_id:
+        return jsonify({"error": "User ID and List ID are required"}), 400
+
+    relationship = UserList(user_id=user_id, list_id=list_id)
+    print("added relationship", relationship)
+    db.session.add(relationship)
+    db.session.commit()
+
+    return jsonify(relationship.to_dict(), {"success": True}), 201
 
 
 @app.route("/auth/login", methods=["POST"])
@@ -111,29 +135,6 @@ def add_user():
     db.session.commit()
 
     return jsonify({"message": "User created successfully"}), 201
-
-
-# # create a new list
-# @app.route("/addlist", methods=["POST", "OPTIONS"])
-# @cross_origin(supports_credentials=True)
-# def create_list():
-#     data = request.get_json()
-#     name = data.get("name")
-#     id = data.get("user_id")
-
-#     if not name:
-#         return jsonify({"error": "Name is required"}), 400
-
-#     user = User.query.get(user_id)
-#     if not user:
-#         return jsonify({"error": "User not found"}), 404
-
-#     new_list = List(name=name, user=user)
-
-#     db.session.add(new_list)
-#     db.session.commit()
-
-#     return jsonify({"message": "List created successfully"})
 
 
 # # Create a new task

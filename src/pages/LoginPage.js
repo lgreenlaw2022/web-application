@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useUser } from '../contexts/UserProvider';
 import Body from '../components/Body';
@@ -17,6 +17,16 @@ export default function LoginPage() {
     // const user = useUser();
     const { user, login, logout } = useUser();
     const api = useApi();
+
+    useEffect(() => {
+        // Call the logout function when the component mounts to ensure that there is no signed-in user.
+        console.log("signing user out just in case")
+        logout();
+        // Set the focus on the username field when the component mounts.
+        if (usernameField.current) {
+          usernameField.current.focus();
+        }
+      }, [logout]);
 
 
     const onSubmit = async (event) => {
@@ -45,20 +55,11 @@ export default function LoginPage() {
         console.log("login submit rtesutl", result)
 
         //TODO: need to make a get request hrz
-        if (result === undefined) {
+        if (result === undefined || !result.success) {
             console.log("result is undefined")
+            //TODO: need to set up error prints here for user
         }
-        else if (result.success === "success") {
-            let next = '/lists';
-            // if (location.state && location.state.next) {
-            //     next = location.state.next;
-            // }
-            console.log('next', next)
-            navigate(next);
-        }
-        else {
-            // setFormErrors({});
-            // UserProvider.set_current_user(user.id)
+        if (result.success) {
             let next = '/lists';
             // if (location.state && location.state.next) {
             //     next = location.state.next;

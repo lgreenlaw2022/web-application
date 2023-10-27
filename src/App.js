@@ -11,7 +11,6 @@ import Body from './components/Body';
 
 //TODO: make tabs consistent size for all files
 export default function App() {
-
   
   return (
     <div className="App">
@@ -24,29 +23,31 @@ export default function App() {
             <Routes>
               {console.log('Rendering route component')}
               <Route path="/login" element={ 
-                <PublicRoute><LoginPage /></PublicRoute>
+                <LoginPage />
               } />
               <Route path="/register" element={
-                <PublicRoute><RegistrationPage /></PublicRoute>
+                <RegistrationPage /> //TODO: got rid of the public route stuff
               } />
+              <Route path="/lists" element={<ListsPage/>}/>
+              <Route path="*" element={<Navigate to="/login" />} />
               {/* <Route path="/" element={
                 <PublicRoute>
                   <Body />
                 </PublicRoute>
               } /> */}
-              <Route path="*" element={
+              {/* <Route path="*" element={
                 <PublicRoute>
                   {/* <PrivateRoute> */}
-                  <Routes>
+                  {/* <Routes> */} 
                     {/* TODO: fix  */}
-                    <Route path="/lists" element={<ListsPage/>}/> 
+                    {/* <Route path="/lists" element={<ListsPage/>}/>  */}
                     {/* <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegistrationPage />} /> */}
-                    <Route path="*" element={<Navigate to="/login" />} />
-                  </Routes>
-                  {/* </PrivateRoute> */}
+                    {/* <Route path="*" element={<Navigate to="/" />} /> */}
+                  {/* </Routes>
+                  </PrivateRoute>
                 </PublicRoute> 
-              }/>
+              }/> */}
             </Routes>
           </UserProvider>
         </ApiProvider>

@@ -47,11 +47,17 @@ class TaskRelationship(db.Model):
 class List(db.Model):
     __tablname__ = "list"
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(255), nullable=False)
+    title = db.Column(db.String(255), unique=True, nullable=False)
 
     def __init__(self, title, *args, **kwargs):
         super(List, self).__init__(*args, **kwargs)
         self.title = title
+
+    def to_dict(self):
+        return {
+            "list_id": self.id,
+            "title": self.title,
+        }
 
 
 class ListRelationship(db.Model):
@@ -69,6 +75,7 @@ class UserList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     list_id = db.Column(db.Integer, db.ForeignKey("list.id"), nullable=False)
+
     user = db.relationship("User", backref=db.backref("user_lists", lazy=True))
     list = db.relationship("List", backref=db.backref("user_lists", lazy=True))
 
