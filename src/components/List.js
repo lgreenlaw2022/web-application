@@ -5,6 +5,7 @@ import "./css/List.css";
 
 export default function List({ list }) {
     const [tasks, setTasks] = useState([]);
+    const [numTasks, setNumTasks] = useState(null);
     const api = useApi();
 
     const [showSubtasks, setShowSubtasks] = useState(false);
@@ -23,28 +24,56 @@ export default function List({ list }) {
         }
     };
 
-    const [tasksCache, setTasksCache] = useState({});
+    // const [tasksCache, setTasksCache] = useState({});
+
+    // useEffect(() => {
+    //     const fetchTasks = async () => {
+    //         console.log("trying to get tasks for ", list["id"])
+    //         if (tasksCache[list.id]) {
+    //             setTasks(tasksCache[list.id]);
+    //         } else {                
+    //             const response = await api.get(`/lists/${list.id}/tasks`);
+    //             console.log("retrieved tasks", response, response.body)
+    //             if (response.ok) {
+    //                 const tasks = response.body;
+    //                 setTasksCache((prevCache) => ({
+    //                     ...prevCache,
+    //                     [list.id]: tasks,
+    //                 }));
+    //                 setTasks(tasks);
+    //             } else {
+    //                 console.error(response.error);
+    //             }
+    //         }
+    //     };
+    //     fetchTasks();
+    // }, [list, tasksCache]);
 
     useEffect(() => {
         const fetchTasks = async () => {
-            if (tasksCache[list.id]) {
-                setTasks(tasksCache[list.id]);
+            // console.log("trying to get tasks for ", 5)//list["id"])
+            const response = await api.get(`/lists/${list.id}/tasks`);
+            // const response = await api.get(`/lists/5/tasks`);
+            console.log("retrieved tasks", response, response.body,response.body["numTasks"], response.body.num_tasks, response.body.tasks)
+            if (response.ok) {
+                const loaded_tasks = response.body.tasks;
+                setNumTasks(response.body.num_tasks)
+                setTasks(loaded_tasks);
+                console.log(`tasks set to ${loaded_tasks} for list ${list.id}`)
+                // setTasksArray((tasks) => {
+                //     const newTasksArray = [];
+                //     for (let i = 0; i < tasks.length; i++) {
+                //         newTasksArray.push(tasks[i]);
+                //     }
+                    
+                // })
+                console.log("new tasks value after SetTask and then setTasksArray is", tasks) //tasksArray)
             } else {
-                const response = await api.get(`/lists/${list.id}/tasks`);
-                if (response.ok) {
-                    const tasks = response.body;
-                    setTasksCache((prevCache) => ({
-                        ...prevCache,
-                        [list.id]: tasks,
-                    }));
-                    setTasks(tasks);
-                } else {
-                    console.error(response.error);
-                }
+                console.error(response.error);
             }
         };
         fetchTasks();
-    }, [api, list, tasksCache]);
+    }, [list]);
 
 
 
@@ -64,9 +93,10 @@ export default function List({ list }) {
 
     return (
         <div className="lists-container">
-            {console.log("list info passed to list component", list, list.tile)}
+            {console.log("list info passed to list component", list, list.title)}
             <h4 className="lists-heading">{list.title}</h4>
-            {tasks.length > 0 && (
+            {console.log("tasks in return for list", tasks, numTasks)}
+            {numTasks > 0 && (
                 <div>
                     {tasks.map((task) => (
                         <Task className="lists-task" task={task} onArrowClick={handleTaskArrowClick}/>

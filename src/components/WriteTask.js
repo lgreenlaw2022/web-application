@@ -37,20 +37,23 @@ const WriteTask = ({ prop_lists }) => {
         const fetchTasks = async () => {
             if (selectedList) {
                 const response = await api.get(`/lists/${selectedList.id}/tasks`);
+                console.log("fetch tasks for list", response, response.body)
                 if (response.ok) {
                     setTasks(response.body);
+                    console.log("set tasks to ", tasks)
                 } else {
                     console.error(response.error);
                 }
             }
         };
         fetchTasks();
-    }, [api, selectedList]);
+    }, [selectedList, tasks]);
 
     useEffect(() => {
         const fetchSubtasks = async () => {
             if (selectedTask) {
                 const response = await api.get(`/tasks/${selectedTask.id}/subtasks`);
+                console.log("fetch subtasks for task", response, response.body)
                 if (response.ok) {
                     setSubtasks(response.body);
                 } else {
@@ -121,15 +124,15 @@ const WriteTask = ({ prop_lists }) => {
                     parent_task_id: selectedSubtask.id,
                     child_task_id: task_id,
                 };
-                response = await api.post('/task-subtask-relationship', subSubtaskData);
+                response = await api.post('/task-subtask-relationship', {parent_task_id: selectedSubtask.id, child_task_id: task_id});
                 responseIsOk = response.ok;
             } else if (isSubtask && selectedTask) {
                 // This is a subtask, create a subtask record
-                const subtaskData = {
-                    parent_task_id: selectedTask.id,
-                    child_task_id: task_id,
-                };
-                response = await api.post('/task-subtask-relationship', subtaskData);
+                // const subtaskData = {
+                //     parent_task_id: selectedTask.id,
+                //     child_task_id: task_id,
+                // };
+                response = await api.post('/task-subtask-relationship', {parent_task_id: selectedTask.id, child_task_id: task_id});
                 responseIsOk = response.ok;
             } else if (selectedList) {
                 // This is a top-level task, create a list-task-relationship record
@@ -178,10 +181,12 @@ const WriteTask = ({ prop_lists }) => {
                     
                 />
                 {console.log("_____SELECTED LIST_____", selectedList)}
+                {console.log("_____SUB TASKS_____", tasks)}
             </div>
             
-            {selectedList && tasks.length > 0 && (
+            {selectedList && ( // && tasks.length > 0 
                 <div className="write-task-field">
+                    {console.log("Is Subtask")}
                     <label className="write-task-label" htmlFor="isSubtask">
                         Is Subtask
                     </label>
@@ -207,6 +212,7 @@ const WriteTask = ({ prop_lists }) => {
             )}
             {selectedTask && subtasks.length > 0 && (
                 <div className="write-task-field">
+                    {console.log("Is Sub-Subtask")}
                     <label className="write-task-label" htmlFor="isSubSubtask">
                         Is Sub-Subtask
                     </label>
@@ -215,6 +221,7 @@ const WriteTask = ({ prop_lists }) => {
             )}
             {isSubSubtask && subtasks.length > 0 && (
                 <div className="write-task-field">
+                    {console.log("Is Parent Subtask")}
                     <label className="write-task-label" htmlFor="subtask">
                         Parent Subtask
                     </label>

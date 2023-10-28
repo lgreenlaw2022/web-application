@@ -42,19 +42,23 @@ def get_lists(user_id):
 
 @app.route("/lists/<int:list_id>/tasks", methods=["GET"])
 def get_tasks(list_id):
+    print("___GETTING TASK FOR LIST___")
+    print("list id", list_id)
     if list_id is None:
         return jsonify({"error": "List not found"}), 404
 
     list_tasks = ListRelationship.query.filter_by(list_id=list_id).all()
+    print("list tasks", list_tasks)
     task_ids = [ul.task_id for ul in list_tasks]
+    print("task ids", task_ids)
 
     tasks = Task.query.filter(Task.id.in_(task_ids)).all()
 
     # Create a list of dictionaries containing the id and title of each list
     task_data = [{"id": task.id, "title": task.title} for task in tasks]
-    print("task data", task_data)
+    print("task data retrieved for the api call", task_data, len(task_data))
 
-    return jsonify({"tasks": task_data}), 200
+    return jsonify({"tasks": task_data, "num_tasks": len(task_data)}), 200
 
 
 @app.route("/lists", methods=["POST"])
