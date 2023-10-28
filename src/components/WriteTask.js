@@ -13,6 +13,7 @@ const WriteTask = ({ prop_lists }) => {
     const [isSubtask, setIsSubtask] = useState(false);
     const [isSubSubtask, setIsSubSubtask] = useState(false);
     const [taskTitle, setTaskTitle] = useState('');
+    const [numTasks, setNumTasks] = useState(null);
     const api = useApi();
 
     useEffect(() => {
@@ -34,19 +35,23 @@ const WriteTask = ({ prop_lists }) => {
     // }, [api]);
 
     useEffect(() => {
-        const fetchTasks = async () => {
-            if (selectedList) {
+        if (selectedList){
+            const fetchTasks = async () => {
+                console.log("fetching tasks for write form for list", selectedList.id)
                 const response = await api.get(`/lists/${selectedList.id}/tasks`);
-                console.log("fetch tasks for list", response, response.body)
+                // const response = a wait api.get(`/lists/5/tasks`);
+                console.log("retrieved tasks", response.body.num_tasks, response.body.tasks)
                 if (response.ok) {
-                    setTasks(response.body);
-                    console.log("set tasks to ", tasks)
+                    const loaded_tasks = response.body.tasks;
+                    setNumTasks(response.body.num_tasks)
+                    setTasks(loaded_tasks);
+                    console.log(`tasks set to ${loaded_tasks} for list ${selectedList.id}`)
+                    console.log("new tasks value after SetTask and then setTasksArray is", tasks) //tasksArray)
                 } else {
                     console.error(response.error);
                 }
-            }
-        };
-        fetchTasks();
+            };
+            fetchTasks();}
     }, [selectedList, tasks]);
 
     useEffect(() => {

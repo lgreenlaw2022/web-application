@@ -42,6 +42,22 @@ export default function Body() {
         const response = await api.get(`/lists/${user}`);
         setLists(response.body);
     };
+
+    const handleDeleteList = async (list_id) => {
+        console.log("handleDeleteList called with listId:", list_id);
+        try {
+            const response = await api.delete(`/lists/${list_id}`);
+            console.log("response:", response);
+            if (response.ok) {
+                const updatedLists = lists.filter((list) => list.id !== list_id);
+                setLists(updatedLists);
+            } else {
+                console.error(response.error);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
     
     // console.log('user', Body.defaultProps.loggedInUser)
     // console.log("df users", !Body.defaultProps.def_lists)
@@ -53,7 +69,7 @@ export default function Body() {
             <WriteTask prop_lists={lists}/>
             {lists && lists.map((list) => (
                 <div>
-                    <List list={list} />  
+                    <List list={list} onDeleteList={handleDeleteList} />  
                 </div>
             ))}
         </div>

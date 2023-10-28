@@ -26,14 +26,6 @@ class User(db.Model):
         }
 
 
-class Task(db.Model):
-    __tablename__ = "task"
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-
-    __table_args__ = (db.UniqueConstraint("id", name="task_id_unique"),)
-
-
 class TaskRelationship(db.Model):
     __tablename__ = "task_relationship"
     # TODO: may need to add the id here rather than having the composite key
@@ -45,10 +37,44 @@ class TaskRelationship(db.Model):
         self.child_task_id = child_task_id
 
 
+class Task(db.Model):
+    __tablename__ = "task"
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    list_relationships = db.relationship(
+        "ListRelationship", cascade="all, delete-orphan"
+    )
+    parent_relationships = db.relationship(
+        "TaskRelationship",
+        foreign_keys=[TaskRelationship.child_task_id],
+        cascade="all, delete-orphan",
+    )
+    child_relationships = db.relationship(
+        "TaskRelationship",
+        foreign_keys=[TaskRelationship.parent_task_id],
+        cascade="all, delete-orphan",
+    )
+
+    __table_args__ = (db.UniqueConstraint("id", name="task_id_unique"),)
+
+
 class List(db.Model):
     __tablname__ = "list"
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), unique=True, nullable=False)
+    list_relationships = db.relationship(
+        "ListRelationship", cascade="all, delete-orphan"
+    )
+    user_list_relationships = db.relationship("UserList", cascade="all, delete-orphan")
+    task_for_list = db.relationship(
+        "Task",
+        secondary="list_relationship",
+        primaryjoin="List.id==ListRelationship.list_id",
+        secondaryjoin="Task.id==ListRelationship.task_id",
+        backref="lists",
+        cascade="all, delete-orphan",
+        single_parent=True,
+    )
 
     def __init__(self, title, *args, **kwargs):
         super(List, self).__init__(*args, **kwargs)

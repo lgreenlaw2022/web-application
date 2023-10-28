@@ -3,7 +3,7 @@ import { useApi } from "../contexts/ApiProvider";
 import Task from "./Task";
 import "./css/List.css";
 
-export default function List({ list }) {
+export default function List({ list, onDeleteList }) {
     const [tasks, setTasks] = useState([]);
     const [numTasks, setNumTasks] = useState(null);
     const api = useApi();
@@ -24,49 +24,17 @@ export default function List({ list }) {
         }
     };
 
-    // const [tasksCache, setTasksCache] = useState({});
-
-    // useEffect(() => {
-    //     const fetchTasks = async () => {
-    //         console.log("trying to get tasks for ", list["id"])
-    //         if (tasksCache[list.id]) {
-    //             setTasks(tasksCache[list.id]);
-    //         } else {                
-    //             const response = await api.get(`/lists/${list.id}/tasks`);
-    //             console.log("retrieved tasks", response, response.body)
-    //             if (response.ok) {
-    //                 const tasks = response.body;
-    //                 setTasksCache((prevCache) => ({
-    //                     ...prevCache,
-    //                     [list.id]: tasks,
-    //                 }));
-    //                 setTasks(tasks);
-    //             } else {
-    //                 console.error(response.error);
-    //             }
-    //         }
-    //     };
-    //     fetchTasks();
-    // }, [list, tasksCache]);
-
     useEffect(() => {
         const fetchTasks = async () => {
             // console.log("trying to get tasks for ", 5)//list["id"])
             const response = await api.get(`/lists/${list.id}/tasks`);
-            // const response = await api.get(`/lists/5/tasks`);
+            // const response = a wait api.get(`/lists/5/tasks`);
             console.log("retrieved tasks", response, response.body,response.body["numTasks"], response.body.num_tasks, response.body.tasks)
             if (response.ok) {
                 const loaded_tasks = response.body.tasks;
                 setNumTasks(response.body.num_tasks)
                 setTasks(loaded_tasks);
                 console.log(`tasks set to ${loaded_tasks} for list ${list.id}`)
-                // setTasksArray((tasks) => {
-                //     const newTasksArray = [];
-                //     for (let i = 0; i < tasks.length; i++) {
-                //         newTasksArray.push(tasks[i]);
-                //     }
-                    
-                // })
                 console.log("new tasks value after SetTask and then setTasksArray is", tasks) //tasksArray)
             } else {
                 console.error(response.error);
@@ -75,31 +43,40 @@ export default function List({ list }) {
         fetchTasks();
     }, [list]);
 
+    const handleDeleteTask = async (taskId) => {
+        console.log("handleDeleteTask called with taskId:", taskId);
+        try {
+            const response = await api.delete(`/tasks/${taskId}`);
+            console.log("response:", response);
+            if (response.ok) {
+                const updatedTasks = tasks.filter((t) => t.id !== taskId);
+                console.log("updatedTasks:", updatedTasks);
+                setTasks(updatedTasks);
+            } else {
+                console.error(response.error);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
+    const handleDeleteList = () => {
+        onDeleteList(list.id);
+        // setDeleted(true);
+    };
 
-    // useEffect(() => {
-    //     async function fetchTasks() {
-    //         console.log("trying to get tasks for ", list["id"])
-    //         const response = await api.get(`/lists/${list["id"]}/tasks`);
-    //         console.log("retrieved tasks", response, response.body)
-    //         if (response.ok) {
-    //             setTasks(response.body);
-    //         } else {
-    //             console.error(response.error);
-    //         }
-    //     }
-    //     fetchTasks();
-    // }, [list]);
 
     return (
         <div className="lists-container">
             {console.log("list info passed to list component", list, list.title)}
             <h4 className="lists-heading">{list.title}</h4>
+            <button onClick={handleDeleteList}>Delete</button>
             {console.log("tasks in return for list", tasks, numTasks)}
             {numTasks > 0 && (
                 <div>
                     {tasks.map((task) => (
-                        <Task className="lists-task" task={task} listId={list.id} onArrowClick={handleTaskArrowClick}/>
+                        <Task className="lists-task" task={task} listId={list.id} onDelete={handleDeleteTask} onArrowClick={handleTaskArrowClick}/>
+                        
                     ))}
                 </div>
             )}
