@@ -99,7 +99,7 @@ export default function List({ list }) {
             {numTasks > 0 && (
                 <div>
                     {tasks.map((task) => (
-                        <Task className="lists-task" task={task} onArrowClick={handleTaskArrowClick}/>
+                        <Task className="lists-task" task={task} listId={list.id} onArrowClick={handleTaskArrowClick}/>
                     ))}
                 </div>
             )}

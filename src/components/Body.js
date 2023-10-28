@@ -32,7 +32,7 @@ export default function Body() {
             setLists(response.body);
         }
         fetchLists();
-    }, [lists]);  
+    }, [lists]);    
 
     const showList = (newList) => {
         setLists([newList, ...lists]); //TODO: need to make this add to the write user's list and everything

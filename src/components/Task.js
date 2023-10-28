@@ -4,43 +4,23 @@ import { useApi } from '../contexts/ApiProvider';
 import MoveTaskForm from "./MoveTask";
 
 
-export default function Task({ task, onTaskDelete, onArrowClick }) {
+export default function Task({ task, listId, onTaskDelete, onArrowClick }) {
     const api = useApi();
     const [deleted, setDeleted] = useState(false);
     const [showMoveForm, setShowMoveForm] = useState(false);
     const [tasks, setTasks] = useState([]);
 
-    // const moveTask = async (task, destinationList) => {
-    //     const response = await api.put(`/tasks/${task.id}`, {
-    //       listId: destinationList.id,
-    //     });
-    //     if (response.ok) {
-    //       const updatedTasks = tasks.map((t) =>
-    //         t.id === task.id ? { ...t, listId: destinationList.id } : t
-    //       );
-    //       setTasks(updatedTasks);
-    //     } else {
-    //       console.error(response.error);
-    //     }
-    // };
     const handleMove = async (newListId) => {
-        try {
-            const response = await api.put(`/tasks/${task.id}`, {
-                listId: newListId
-            });
-            if (response.ok) {
-                const updatedTasks = tasks.map((t) =>
-                    t.id === task.id ? { ...t, listId: newListId } : t
-                );
-                setTasks(updatedTasks);
-            } else {
-                console.error(response.error);
-            }
-        } catch (error) {
-            console.error(error);
-        }
+        console.log("handleMove called with newListId:", newListId);
+        console.log("handleMove called with task.id:", task.id)
+        console.log("handleMove called with listId:", newListId)
+        const move_response = await api.post('/list-task-relationship', {list_id: newListId, task_id: task.id});
+        console.log("move_response:", move_response);
+        const delete_response = await api.delete(`/delete/parent-task/${listId}/${task.id}`);
+        console.log("delete_response:", delete_response);     
     };
 
+    //I think I should move this to the list component, so I have access to the parent clearly
     const handleDelete = async () => {
         const response = await api.delete(`/tasks/${task.id}`);
 
@@ -75,7 +55,7 @@ export default function Task({ task, onTaskDelete, onArrowClick }) {
             onMouseLeave={handleMouseLeave}>
             <div className="arrow-container" onClick={handleArrowClick}>
                 {/* HARD CODED */}
-                <i className="fas fa-chevron-right">{"v"}</i>
+                <i className="fas fa-chevron-right">{"+"}</i>
                 {/* {task.subtasks && task.subtasks.length > 0 && (
                 <i className="fas fa-chevron-right"></i>
                 )} */}
@@ -88,7 +68,6 @@ export default function Task({ task, onTaskDelete, onArrowClick }) {
                 task={task}
                 // lists={lists}
                 onMove={handleMove}
-                onCancel={() => setShowMoveForm(false)}
                 />
             )}
         </div>

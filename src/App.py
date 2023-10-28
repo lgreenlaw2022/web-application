@@ -138,6 +138,28 @@ def create_list_task_relationship():
     return jsonify({"message": "List-Task Relationship created", "success": True}), 201
 
 
+@app.route("/delete/parent-task/<int:list_id>/<int:task_id>", methods=["DELETE"])
+def delete_list_task_relationship(list_id, task_id):
+    # Find the ListRelationship object with the specified list ID and task ID
+    relationship = ListRelationship.query.filter_by(
+        list_id=list_id, task_id=task_id
+    ).first()
+
+    # If the relationship exists, delete it from the database
+    if relationship:
+        db.session.delete(relationship)
+        db.session.commit()
+        return (
+            jsonify({"message": "List-Task Relationship deleted", "success": True}),
+            200,
+        )
+    else:
+        return (
+            jsonify({"error": "List-Task Relationship not found", "success": False}),
+            404,
+        )
+
+
 @app.route("/task-subtask-relationship", methods=["POST"])
 def create_task_subtask_relationship():
     # Get the request data
