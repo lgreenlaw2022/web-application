@@ -47,21 +47,21 @@ export default function List({ list, onDeleteList }) {
         fetchTasks();
     }, [list]); //list
 
-    useEffect(() => {
-        const fetchSubtasks = async () => {
-            if (currTask) {
-                const response = await api.get(`/tasks/${currTask.id}/subtasks`);
-                console.log("fetch subtasks for task", response, response.body)
-                if (response.ok) {
-                    const loaded_subtasks = response.body.subtasks;
-                    setSubtasks(loaded_subtasks);
-                } else {
-                    console.error(response.error);
-                }
-            }
-        };
-        fetchSubtasks();
-    }, [currTask]); //currTask
+    // useEffect(() => {
+    //     const fetchSubtasks = async () => {
+    //         if (currTask) {
+    //             const response = await api.get(`/tasks/${currTask.id}/subtasks`);
+    //             console.log("fetch subtasks for task", response, response.body)
+    //             if (response.ok) {
+    //                 const loaded_subtasks = response.body.subtasks;
+    //                 setSubtasks(loaded_subtasks);
+    //             } else {
+    //                 console.error(response.error);
+    //             }
+    //         }
+    //     };
+    //     fetchSubtasks();
+    // }, [currTask]); //currTask
  
 
     const handleDeleteTask = async (taskId) => {
@@ -103,11 +103,10 @@ export default function List({ list, onDeleteList }) {
                                     className="lists-task"
                                     task={task}
                                     listId={list.id}
-                                    hasSubtask={subtasks.length > 0}
                                     onDelete={handleDeleteTask}
                                     onArrowClick={handleTaskArrowClick}
                                 />
-                                {/* <SubtaskList taskId={task.id} handleDeleteTask={handleDeleteTask} onArrowClick={handleArrowClick}/> */}
+                                <SubtaskList taskId={task.id} handleDeleteTask={handleDeleteTask} onArrowClick={handleArrowClick}/>
                             </div>
                         );
                     })}
