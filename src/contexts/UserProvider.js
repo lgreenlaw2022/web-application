@@ -18,7 +18,7 @@ export default function UserProvider({ children }) {
   };
 
   const login = async (userData, password) => {
-    try {
+
       // Perform an API call to validate credentials and retrieve user data.
       // Replace this with your actual API call.
       const response = await api.login(userData, password);
@@ -33,15 +33,12 @@ export default function UserProvider({ children }) {
         setUser(response.user);
         sessionStorage.setItem('user', JSON.stringify(response.user));
         console.log('user stored in session storage:', response.user);
-        return response;
+        
       } else {
         // Handle authentication errors here.
-        console.error('Login failed:', response.error);
+        console.error('Login failed:', message);
       }
-    } catch (error) {
-      // Handle API call errors.
-      console.error('API error:', error);
-    }
+      return response;
   };
 
   const logout = () => {

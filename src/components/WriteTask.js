@@ -20,7 +20,7 @@ const WriteTask = ({ prop_lists }) => {
         if (prop_lists && prop_lists.length > 0) {
             setLists(prop_lists);
         }
-    }, [prop_lists]);
+    }, []); //prop_lists
 
     // useEffect(() => {
     //     const fetchLists = async () => {
@@ -52,7 +52,7 @@ const WriteTask = ({ prop_lists }) => {
                 }
             };
             fetchTasks();}
-    }, [selectedList, tasks]);
+    }, []); //selectedList, tasks
 
     useEffect(() => {
         const fetchSubtasks = async () => {

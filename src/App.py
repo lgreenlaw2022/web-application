@@ -246,10 +246,10 @@ def get_user():
     print(userData, password)
 
     if not userData:
-        return jsonify({"error": "Username is required"}), 400
+        return jsonify({"message": "Username is required"}), 400
 
     if not password:
-        return jsonify({"error": "Password is required"}), 400
+        return jsonify({"message": "Password is required"}), 400
     user = (
         db.session.query(User)
         .filter(
@@ -259,14 +259,14 @@ def get_user():
     )
     print(user)
     if user is None:
-        return jsonify({"error": "User doesn't exist"}), 400
+        return jsonify({"message": "User doesn't exist", "success": False}), 400
 
     # stored_password = user.password  # TODO: don't need this
     print("Stored password:", user.password)
 
     if not bcrypt.checkpw(password.encode("utf-8"), user.password):
         print("wrong passwrod")
-        return jsonify({"error": "Password is wrong"}), 400
+        return jsonify({"message": "Password is wrong", "success": False}), 400
 
     db.session.commit()
     print("api successfully logged in user", user.id)

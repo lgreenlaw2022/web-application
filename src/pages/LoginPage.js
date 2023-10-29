@@ -58,6 +58,10 @@ export default function LoginPage() {
         if (result === undefined || !result.success) {
             console.log("result is undefined")
             //TODO: need to set up error prints here for user
+            const error = result.message;
+            setFormErrors({ password: 'Invalid username or password' });
+            console.error(error);
+        
         }
         if (result.success) {
             let next = '/lists';

@@ -4,10 +4,12 @@ import { useApi } from '../contexts/ApiProvider';
 import MoveTaskForm from "./MoveTask";
 
 
-export default function Task({ task, listId, onDelete, onArrowClick }) {
+export default function Task({ task, listId=null, hasSubtask=false, onDelete, onArrowClick, isSubTask=false, 
+                                isSubSubtask=false }) {
     const api = useApi();
     const [deleted, setDeleted] = useState(false);
-    const [showMoveForm, setShowMoveForm] = useState(false);
+    const [showMoveForm, setShowMoveForm] = useState((!isSubTask && !isSubSubtask));
+    const [showArrowContainer, setShowArrowContainer] = useState(false);
     const [tasks, setTasks] = useState([]);
 
     const handleMove = async (newListId) => {
@@ -40,15 +42,16 @@ export default function Task({ task, listId, onDelete, onArrowClick }) {
     // };
 
     const handleArrowClick = () => {
+        setShowArrowContainer(!showArrowContainer);
         onArrowClick(task.id);
     };
 
     const handleMouseEnter = () => {
         setShowMoveForm(true);
-      };
+    };
     
     const handleMouseLeave = () => {
-    setShowMoveForm(false);
+        setShowMoveForm(false);
     };
 
     // TODO: not sure this is going to rerender correctly
@@ -56,20 +59,15 @@ export default function Task({ task, listId, onDelete, onArrowClick }) {
         <div className="task-container"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}>
-            <div className="arrow-container" onClick={handleArrowClick}>
-                {/* HARD CODED */}
-                <i className="fas fa-chevron-right">{"+"}</i>
-                {/* {task.subtasks && task.subtasks.length > 0 && (
-                <i className="fas fa-chevron-right"></i>
-                )} */}
-            </div>    
+            {hasSubtask && (
+                <div className="arrow-container" onClick={handleArrowClick}>
+                     <i>{showArrowContainer ? "-" : "+"}</i>
+                </div>   
+            ) 
+            }           
             <input type="checkbox" onClick={handleDelete}/>
             <span>{task.title}</span>
-            {/* {task.subtasks && (
-                <button onClick={handleArrowClick}>
-                    {showSubtasks ? "Hide" : "Show"} Subtasks
-                </button>
-            )} */}
+            
             {showMoveForm && (
                 <MoveTaskForm
                 task={task}
