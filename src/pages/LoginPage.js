@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useUser } from '../contexts/UserProvider';
 import InputField from '../components/InputField';
 import { Button, Form, Alert } from 'react-bootstrap';
-import '../components/css/LoginPage.css'; //TODO: move this to css for pages
+import './css/LoginPage.css'; //TODO: move this to css for pages
 
 
 const LoginPage = () => {

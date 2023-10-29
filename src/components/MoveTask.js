@@ -11,7 +11,7 @@ export default function MoveTaskForm({ task, onMove}) {
 
     useEffect(() => {
         const fetchLists = async () => {
-            console.log("trying to load lists, loggedInUserId", user) // TODO: the issue is that this is not defined
+            console.log("trying to load lists, loggedInUserId", user)
             const response = await api.get(`/lists/${user}`);
             console.log("trying to load lists, respose.body", response, response.body)
             setLists(response.body);
