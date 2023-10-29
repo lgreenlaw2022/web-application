@@ -52,11 +52,13 @@ export default function Body() {
             {console.log("body thinks user is", user)}
             <WriteList showList={updateLists} />
             <WriteTask prop_lists={lists}/>
+            <div className="lists">
             {lists && lists.map((list) => (
                 <div>
                     <List list={list} onDeleteList={handleDeleteList} />  
                 </div>
             ))}
+            </div>
         </div>
     );
 }

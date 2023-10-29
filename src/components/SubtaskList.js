@@ -5,7 +5,7 @@ import "./css/Task.css";
 
 function SubtaskList({ taskId, handleDeleteTask, handleTaskArrowClick }) {
     const [subtasks, setSubtasks] = useState([]);
-    const [subsubtasks, setSubsubtasks] = useState([]);
+    const [subsubtasksMap, setSubsubtasksMap] = useState({});
     const [currTask, setCurrTask] = useState(taskId);
     const [isSubSubtask, setIsSubSubtask] = useState(false);
     const api = useApi();
@@ -16,11 +16,7 @@ function SubtaskList({ taskId, handleDeleteTask, handleTaskArrowClick }) {
             console.log("fetch subtasks for task", response, response.body)
             if (response.ok) {
                 const loaded_subtasks = response.body.subtasks;
-                if (isSubSubtask) {
-                    setSubsubtasks(loaded_subtasks);
-                } else {
-                    setSubtasks(loaded_subtasks);
-                }
+                setSubtasks(loaded_subtasks);
             } else {
                 console.error(response.error);
             }
@@ -28,12 +24,30 @@ function SubtaskList({ taskId, handleDeleteTask, handleTaskArrowClick }) {
         fetchSubtasks();
     }, []); //currTask
 
+    useEffect(() => {
+        const fetchSubsubtasks = async (subtaskId) => {
+            const response = await api.get(`/tasks/${subtaskId}/subtasks`);
+            console.log("fetch subsubtasks for subtask", response, response.body)
+            if (response.ok) {
+                const loaded_subsubtasks = response.body.subtasks;
+                setSubsubtasksMap((prevMap) => ({
+                    ...prevMap,
+                    [subtaskId]: loaded_subsubtasks,
+                }));
+            } else {
+                console.error(response.error);
+            }
+        };
+        subtasks.forEach((subtask) => {
+            fetchSubsubtasks(subtask.id);
+        });
+    }, [subtasks]);
+
     return (
         subtasks && subtasks.length > 0 && (
             <div className="lists-subtasks">
                 {subtasks.map((subtask) => {
-                    // setCurrTask(subtask);
-                    // setIsSubSubtask(false);
+                    const subsubtasks = subsubtasksMap[subtask.id] || [];
                     return (
                         <div key={subtask.id} className="subtask">
                             <Task
@@ -43,30 +57,26 @@ function SubtaskList({ taskId, handleDeleteTask, handleTaskArrowClick }) {
                                 onDelete={handleDeleteTask}
                                 onArrowClick={handleTaskArrowClick}
                             />
-                            {/* {subsubtasks && subsubtasks.length > 0 && (
-                                <div className="subsubtask">  
-                                    {subsubtasks.map((subsubtask) => {
-                                        setCurrTask(subsubtask);
-                                        setIsSubSubtask(true);
-                                        return (
-                                            <Task
-                                                key={subsubtask.id}
-                                                className="lists-task"
-                                                task={subsubtask}
-                                                isSubSubtask={true}
-                                                onDelete={handleDeleteTask}
-                                                onArrowClick={handleTaskArrowClick}
-                                            />
-                                        );
-                                    })}
+                            {subsubtasks && subsubtasks.length > 0 && (
+                                <div className="subsubtask">
+                                    {subsubtasks.map((subsubtask) => (
+                                        <Task
+                                            key={subsubtask.id}
+                                            className="lists-task"
+                                            task={subsubtask}
+                                            isSubSubtask={true}
+                                            onDelete={handleDeleteTask}
+                                            onArrowClick={handleTaskArrowClick}
+                                        />
+                                    ))}
                                 </div>
-                            )} */}
+                            )}
                         </div>
                     );
                 })}
             </div>
         )
-    )
-};
+    );
+}
 
 export default SubtaskList;
