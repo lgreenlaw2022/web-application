@@ -65,11 +65,11 @@ export default function Task({ task, listId, onDelete, onArrowClick }) {
             </div>    
             <input type="checkbox" onClick={handleDelete}/>
             <span>{task.title}</span>
-            {task.subtasks && (
+            {/* {task.subtasks && (
                 <button onClick={handleArrowClick}>
                     {showSubtasks ? "Hide" : "Show"} Subtasks
                 </button>
-            )}
+            )} */}
             {showMoveForm && (
                 <MoveTaskForm
                 task={task}
@@ -77,14 +77,14 @@ export default function Task({ task, listId, onDelete, onArrowClick }) {
                 onMove={handleMove}
                 />
             )}
-            {showSubtasks && (
+            {/* {showSubtasks && (
                 <SubtaskList
                 subtasks={task.subtasks}
                 listId={listId}
                 onDelete={onDelete}
                 onArrowClick={onArrowClick}
                 />
-            )}
+            )} */}
         </div>
     );
 }

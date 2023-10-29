@@ -60,7 +60,8 @@ const WriteTask = ({ prop_lists }) => {
                 const response = await api.get(`/tasks/${selectedTask.id}/subtasks`);
                 console.log("fetch subtasks for task", response, response.body)
                 if (response.ok) {
-                    setSubtasks(response.body);
+                    const loaded_subtasks = response.body.subtasks;
+                    setSubtasks(loaded_subtasks);
                 } else {
                     console.error(response.error);
                 }
@@ -151,6 +152,7 @@ const WriteTask = ({ prop_lists }) => {
     
             if (responseIsOk) {
                 setTaskTitle('');
+                setSelectedList(null);
                 setSelectedTask(null);
                 setSelectedSubtask(null);
                 setIsSubtask(false);
@@ -189,7 +191,7 @@ const WriteTask = ({ prop_lists }) => {
                 {console.log("_____SUB TASKS_____", tasks)}
             </div>
             
-            {selectedList && ( // && tasks.length > 0 
+            {selectedList && tasks.length > 0 && (
                 <div className="write-task-field">
                     {console.log("Is Subtask")}
                     <label className="write-task-label" htmlFor="isSubtask">

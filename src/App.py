@@ -61,6 +61,30 @@ def get_tasks(list_id):
     return jsonify({"tasks": task_data, "num_tasks": len(task_data)}), 200
 
 
+@app.route("/tasks/<int:task_id>/subtasks", methods=["GET"])
+def get_subtasks(task_id):
+    # Find the task with the specified ID
+    print("___GETTING SUBTASKS FOR TASK___", task_id)
+    task = Task.query.filter_by(id=task_id).first()
+
+    # If the task exists, get its subtasks
+    if task:
+        subtask_relationships = TaskRelationship.query.filter_by(
+            parent_task_id=task_id
+        ).all()
+        print("subtask relationships", subtask_relationships)
+        subtask_ids = [ul.child_task_id for ul in subtask_relationships]
+        print("subtask ids", subtask_ids)
+
+        subtasks = Task.query.filter(Task.id.in_(subtask_ids)).all()
+        subtask_data = [
+            {"id": subtask.id, "title": subtask.title} for subtask in subtasks
+        ]
+        return jsonify({"subtasks": subtask_data, "num_subtasks": len(subtasks)}), 200
+    else:
+        return jsonify({"error": "Task not found", "success": False}), 404
+
+
 @app.route("/lists", methods=["POST"])
 def create_list():
     title = request.json.get("title")
