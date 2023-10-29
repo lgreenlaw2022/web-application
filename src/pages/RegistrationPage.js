@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import InputField from '../components/InputField';
 import { useApi } from '../contexts/ApiProvider';
-// import { useHistory } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 
 export default function RegistrationPage() {
     const api = useApi();
-    // const history = useHistory();
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -33,13 +31,8 @@ export default function RegistrationPage() {
         try {
             const response = await api.post('/auth/register', JSON.stringify(formData));
             console.log(response);
-            // handle successful registration
-            // navigate('/login');
             console.log("Registration successful");
             let next = '/login';
-            // if (location.state && location.state.next) {
-            //     next = location.state.next;
-            // }
             navigate(next);
         } catch (error) {
             console.error(error);

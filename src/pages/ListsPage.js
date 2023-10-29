@@ -7,7 +7,6 @@ import { useUser } from '../contexts/UserProvider';
 import { useNavigate, Link } from 'react-router-dom';
 
 export default function ListsPage() {
-    // const [user, setUser] = useState();
     const api = useApi();
     const { user } = useUser();
       

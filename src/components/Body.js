@@ -5,37 +5,24 @@ import List from "./List";
 import WriteTask from "./WriteTask";
 import WriteList from "./WriteList";
 import { useUser } from '../contexts/UserProvider';
-import ApiClient from "../ApiClient";
-import { UserContext } from "../contexts/UserProvider";
-
-// const list1 = ['item1', 'item2', 'item3'];
-// const list2 = ['item4', 'item5', 'item6'];
-// const list3 = ['item7', 'item8', 'item9'];
-
-// const default_lists = [
-//     { name: 'List 1', items: ['item1', 'item2', 'item3'] },
-//     { name: 'List 2', items: ['item4', 'item5', 'item6'] },
-//     { name: 'List 3', items: ['item7', 'item8', 'item9'] },
-// ];
 
 export default function Body() {
     const [lists, setLists] = useState([]);
     const api = useApi();
     const { user} = useUser();
-    // const { user } = useContext(UserContext);
 
     useEffect(() => {
         const fetchLists = async () => {
-            console.log("trying to load lists, loggedInUserId", user) // TODO: the issue is that this is not defined
+            console.log("trying to load lists, loggedInUserId", user) 
             const response = await api.get(`/lists/${user}`);
             console.log("trying to load lists, respose.body", response, response.body)
             setLists(response.body);
         }
         fetchLists();
-    }, []); //lists    
+    }, [lists]); //lists    
 
     const showList = (newList) => {
-        setLists([newList, ...lists]); //TODO: need to make this add to the write user's list and everything
+        setLists([newList, ...lists]); 
     };
 
     const updateLists = async () => {
@@ -59,8 +46,6 @@ export default function Body() {
         }
     };
     
-    // console.log('user', Body.defaultProps.loggedInUser)
-    // console.log("df users", !Body.defaultProps.def_lists)
     return (
         <div className="body-container">
             {console.log('lists:', lists)}

@@ -36,8 +36,8 @@ export default function List({ list, onDeleteList }) {
             console.log("retrieved tasks", response, response.body,response.body["numTasks"], response.body.num_tasks, response.body.tasks)
             if (response.ok) {
                 const loaded_tasks = response.body.tasks;
-                // setNumTasks(response.body.num_tasks)
-                // setTasks(loaded_tasks);
+                setNumTasks(response.body.num_tasks)
+                setTasks(loaded_tasks);
                 console.log(`tasks set to ${loaded_tasks} for list ${list.id}`)
                 console.log("new tasks value after SetTask and then setTasksArray is", tasks) //tasksArray)
             } else {
@@ -45,7 +45,7 @@ export default function List({ list, onDeleteList }) {
             }
         };
         fetchTasks();
-    }, []); //list
+    }, [list]); //list
 
     useEffect(() => {
         const fetchSubtasks = async () => {
@@ -61,7 +61,7 @@ export default function List({ list, onDeleteList }) {
             }
         };
         fetchSubtasks();
-    }, []); //currTask
+    }, [currTask]); //currTask
  
 
     const handleDeleteTask = async (taskId) => {
@@ -116,40 +116,3 @@ export default function List({ list, onDeleteList }) {
         </div>
     );
 }
-
-
-// {subtasks && subtasks.length > 0 && (
-//     <div className="lists-subtasks">
-//         {subtasks.map((subtask) => {
-//             setCurrTask(subtask);
-//             return (
-//                 <div key={subtask.id}>
-//                     <Task
-//                         className="lists-task"
-//                         task={subtask}
-//                         listId={list.id}
-//                         hasSubtask={subsubtasks.length > 0}
-//                         onDelete={handleDeleteTask}
-//                         onArrowClick={handleTaskArrowClick}
-//                     />
-//                     {subsubtasks && subsubtasks.length > 0 && (
-//                         <div className="lists-subsubtasks">
-//                             {subsubtasks.map((subsubtask) => {
-//                                 return (
-//                                     <Task
-//                                         key={subsubtask.id}
-//                                         className="lists-task"
-//                                         task={subsubtask}
-//                                         listId={list.id}
-//                                         onDelete={handleDeleteTask}
-//                                         onArrowClick={handleTaskArrowClick}
-//                                     />
-//                                 );
-//                             })}
-//                         </div>
-//                     )}
-//                 </div>
-//             );
-//         })}
-//     </div>
-// )}

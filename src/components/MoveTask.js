@@ -17,7 +17,7 @@ export default function MoveTaskForm({ task, onMove}) {
             setLists(response.body);
         }
         fetchLists();
-    }, []);//lists  
+    }, [lists]);//lists  
 
     const handleMove = () => {
         onMove(destinationList.id);
