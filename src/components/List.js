@@ -70,12 +70,6 @@ export default function List({ list, onDeleteList }) {
 		onDeleteList(list.id);
 	};
 
-	// Handle the arrow click button click
-	// const handleArrowClick = () => {
-	// 	// Toggle the showSubtasks state variable
-	// 	setShowSubtasks(!showSubtasks);
-	// };
-
 	// Initialize state to an empty object
 	const [visibleSubtasks, setVisibleSubtasks] = useState({});
 

@@ -17,6 +17,7 @@ export default function Task({
 	const [showArrowContainer, setShowArrowContainer] = useState(false);
 	const [hasSubtasks, setHasSubtasks] = useState(false);
 
+	// fetch subtasks for task
 	useEffect(() => {
 		const fetchSubtasks = async () => {
 			const response = await api.get(`/tasks/${task.id}/subtasks`);
@@ -31,9 +32,8 @@ export default function Task({
 		fetchSubtasks();
 	}, []); // the task will not change so there is no need for later rerender
 
+	// handleMove function to move task to new list
 	const handleMove = async (newListId) => {
-		console.log("handleMove called with newListId:", newListId);
-		console.log("handleMove called with task.id:", task.id);
 		const move_response = await api.post("/list-task-relationship", {
 			list_id: newListId,
 			task_id: task.id,
@@ -45,20 +45,24 @@ export default function Task({
 		console.log("delete_response:", delete_response);
 	};
 
+	// delete task passed by either List or SubtaskList components
 	const handleDelete = () => {
 		onDelete(task.id);
 		setDeleted(true);
 	};
 
+	// handleArrowClick function to show/hide arrow container
 	const handleArrowClick = () => {
 		setShowArrowContainer(!showArrowContainer);
-		onArrowClick(); //task.id);
+		onArrowClick();
 	};
 
+	// function to show move form
 	const handleMouseEnter = () => {
 		setShowMoveForm(true);
 	};
 
+	// function to hide move form
 	const handleMouseLeave = () => {
 		setShowMoveForm(false);
 	};
@@ -69,7 +73,7 @@ export default function Task({
 			onMouseEnter={handleMouseEnter}
 			onMouseLeave={handleMouseLeave}
 		>
-			{console.log("task", task.id, "hasSubtask", hasSubtasks)}
+			{/* logic to show the plus or minus sign indicating if subtasks exist and are showing */}
 			{hasSubtasks && (
 				<div className="arrow-container" onClick={handleArrowClick}>
 					<i>{showArrowContainer ? "-" : "+"}</i>
@@ -77,7 +81,7 @@ export default function Task({
 			)}
 			<input type="checkbox" onClick={handleDelete} />
 			<span>{task.title}</span>
-
+			{/* only allow move form to appear for parent tasks */}
 			{!isSubTask && !isSubSubtask && showMoveForm && (
 				<MoveTaskForm onMove={handleMove} />
 			)}

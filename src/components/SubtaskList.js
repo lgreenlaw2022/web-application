@@ -48,11 +48,6 @@ export default function SubtaskList({ taskId, handleDeleteTask }) {
 		});
 	}, [subtasks]);
 
-	// Handle the on the toggle to switch the showSubsubtasks state
-	// const handleArrowClick = () => {
-	// 	setShowSubsubtasks(!showSubsubtasks);
-	// };
-
 	const [visibleSubtasks, setVisibleSubtasks] = useState({});
 
 	const handleArrowClick = (taskId) => {
