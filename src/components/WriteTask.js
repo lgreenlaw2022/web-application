@@ -50,7 +50,7 @@ const WriteTask = ({ prop_lists }) => {
       };
       fetchTasks();
     }
-  }, [selectedList, tasks]); //selectedList, tasks
+  }, [selectedList, tasks]);
 
   useEffect(() => {
     const fetchSubtasks = async () => {
@@ -208,9 +208,9 @@ const WriteTask = ({ prop_lists }) => {
           selectedKey={
             selectedList
               ? JSON.stringify({
-                  id: selectedList["id"],
-                  title: selectedList["title"],
-                })
+                id: selectedList["id"],
+                title: selectedList["title"],
+              })
               : null
           }
         />
@@ -247,9 +247,9 @@ const WriteTask = ({ prop_lists }) => {
             selectedKey={
               selectedTask
                 ? JSON.stringify({
-                    id: selectedTask.id,
-                    title: selectedTask.title,
-                  })
+                  id: selectedTask.id,
+                  title: selectedTask.title,
+                })
                 : null
             }
             onChange={handleTaskChange}
@@ -286,9 +286,9 @@ const WriteTask = ({ prop_lists }) => {
             selectedKey={
               selectedSubtask
                 ? JSON.stringify({
-                    id: selectedSubtask.id,
-                    title: selectedSubtask.title,
-                  })
+                  id: selectedSubtask.id,
+                  title: selectedSubtask.title,
+                })
                 : null
             }
             onChange={handleSubtaskChange}

@@ -14,26 +14,33 @@ export default function List({ list, onDeleteList }) {
 
     const [showSubtasks, setShowSubtasks] = useState(false);
 
-    const handleArrowClick = () => {
-        setShowSubtasks(!showSubtasks);
-    };
-    
-    const handleTaskArrowClick = (taskId) => {
-    // Find the task with the specified ID
-        const task = list.tasks.find((t) => t.id === taskId);
-        if (task) {
-            // Toggle the subtasks for the task
-            task.showSubtasks = !task.showSubtasks;
-            setShowSubtasks(!showSubtasks);
-        }
-    };
+    // const handleArrowClick = (taskId) => {
+    //     const task = tasks?.find((t) => t.id === taskId);
+    //     if (task) {
+    //         const subtasks = task.subtasks || [];
+    //         setTasks(
+    //             tasks.map((t) =>
+    //                 t.id === taskId ? { ...t, subtasks: [...subtasks] } : t
+    //             )
+    //         );
+    //     }
+    // };
+    // const handleTaskArrowClick = (taskId) => {
+    //     // Find the task with the specified ID
+    //     const task = list.tasks.find((t) => t.id === taskId);
+    //     if (task) {
+    //         // Toggle the subtasks for the task
+    //         task.showSubtasks = !task.showSubtasks;
+    //         setShowSubtasks(!showSubtasks);
+    //     }
+    // };
 
     useEffect(() => {
         const fetchTasks = async () => {
             // console.log("trying to get tasks for ", 5)//list["id"])
             const response = await api.get(`/lists/${list.id}/tasks`);
             // const response = a wait api.get(`/lists/5/tasks`);
-            console.log("retrieved tasks", response, response.body,response.body["numTasks"], response.body.num_tasks, response.body.tasks)
+            console.log("retrieved tasks", response, response.body, response.body["numTasks"], response.body.num_tasks, response.body.tasks)
             if (response.ok) {
                 const loaded_tasks = response.body.tasks;
                 setNumTasks(response.body.num_tasks)
@@ -62,7 +69,7 @@ export default function List({ list, onDeleteList }) {
     //     };
     //     fetchSubtasks();
     // }, [currTask]); //currTask
- 
+
 
     const handleDeleteTask = async (taskId) => {
         console.log("handleDeleteTask called with taskId:", taskId);
@@ -86,6 +93,16 @@ export default function List({ list, onDeleteList }) {
         // setDeleted(true);
     };
 
+    // const handleArrowClick = () => {
+    //     setShowArrowContainer(!showArrowContainer);
+    //     setShowSubtasks(!showSubtasks); // Toggle the showSubtasks state variable
+    //     onArrowClick(task.id);
+    // };
+
+    const handleArrowClick = () => {
+        setShowSubtasks(!showSubtasks); // Toggle the showSubtasks state variable
+    }
+
 
     return (
         <div className="lists-container">
@@ -104,9 +121,15 @@ export default function List({ list, onDeleteList }) {
                                     task={task}
                                     listId={list.id}
                                     onDelete={handleDeleteTask}
-                                    onArrowClick={handleTaskArrowClick}
+                                    onArrowClick={handleArrowClick}
                                 />
-                                <SubtaskList taskId={task.id} handleDeleteTask={handleDeleteTask} onArrowClick={handleArrowClick}/>
+
+                                {showSubtasks && (
+                                    <SubtaskList taskId={task.id}
+                                        handleDeleteTask={handleDeleteTask}
+                                    // onArrowClick={handleArrowClick}
+                                    />
+                                )}
                             </div>
                         );
                     })}

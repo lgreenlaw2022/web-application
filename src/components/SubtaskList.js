@@ -8,6 +8,7 @@ function SubtaskList({ taskId, handleDeleteTask, handleTaskArrowClick }) {
     const [subsubtasksMap, setSubsubtasksMap] = useState({});
     const [currTask, setCurrTask] = useState(taskId);
     const [isSubSubtask, setIsSubSubtask] = useState(false);
+    const [showSubsubtasks, setShowSubsubtasks] = useState(false);
     const api = useApi();
 
     useEffect(() => {
@@ -43,6 +44,12 @@ function SubtaskList({ taskId, handleDeleteTask, handleTaskArrowClick }) {
         });
     }, [subtasks]);
 
+    const handleArrowClick = () => {
+        setShowSubsubtasks(!showSubsubtasks); // Toggle the showSubtasks state variable
+    }
+
+
+
     return (
         subtasks && subtasks.length > 0 && (
             <div className="lists-subtasks">
@@ -55,9 +62,9 @@ function SubtaskList({ taskId, handleDeleteTask, handleTaskArrowClick }) {
                                 task={subtask}
                                 isSubTask={true}
                                 onDelete={handleDeleteTask}
-                                onArrowClick={handleTaskArrowClick}
+                                onArrowClick={handleArrowClick}
                             />
-                            {subsubtasks && subsubtasks.length > 0 && (
+                            {showSubsubtasks && subsubtasks && subsubtasks.length > 0 && (
                                 <div className="subsubtask">
                                     {subsubtasks.map((subsubtask) => (
                                         <Task
@@ -66,7 +73,7 @@ function SubtaskList({ taskId, handleDeleteTask, handleTaskArrowClick }) {
                                             task={subsubtask}
                                             isSubSubtask={true}
                                             onDelete={handleDeleteTask}
-                                            onArrowClick={handleTaskArrowClick}
+                                            onArrowClick={handleArrowClick}
                                         />
                                     ))}
                                 </div>

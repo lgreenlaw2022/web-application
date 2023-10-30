@@ -4,13 +4,12 @@ import MoveTaskForm from "./MoveTask";
 import "./css/Task.css";
 
 
-export default function Task({ task, listId=null, onDelete, onArrowClick, isSubTask=false, 
-                                isSubSubtask=false }) {
+export default function Task({ task, listId = null, onDelete, onArrowClick, isSubTask = false,
+    isSubSubtask = false }) {
     const api = useApi();
     const [deleted, setDeleted] = useState(false);
-    const [showMoveForm, setShowMoveForm] = useState((!isSubTask && !isSubSubtask));
+    const [showMoveForm, setShowMoveForm] = useState(false);
     const [showArrowContainer, setShowArrowContainer] = useState(false);
-    const [tasks, setTasks] = useState([]);
     const [hasSubtasks, setHasSubtasks] = useState(false);
 
     useEffect(() => {
@@ -30,10 +29,10 @@ export default function Task({ task, listId=null, onDelete, onArrowClick, isSubT
     const handleMove = async (newListId) => {
         console.log("handleMove called with newListId:", newListId);
         console.log("handleMove called with task.id:", task.id)
-        const move_response = await api.post('/list-task-relationship', {list_id: newListId, task_id: task.id});
+        const move_response = await api.post('/list-task-relationship', { list_id: newListId, task_id: task.id });
         console.log("move_response:", move_response);
         const delete_response = await api.delete(`/delete/parent-task/${listId}/${task.id}`);
-        console.log("delete_response:", delete_response);     
+        console.log("delete_response:", delete_response);
     };
 
     const handleDelete = () => {
@@ -43,13 +42,13 @@ export default function Task({ task, listId=null, onDelete, onArrowClick, isSubT
 
     const handleArrowClick = () => {
         setShowArrowContainer(!showArrowContainer);
-        onArrowClick(task.id);
+        onArrowClick();//task.id);
     };
 
     const handleMouseEnter = () => {
         setShowMoveForm(true);
     };
-    
+
     const handleMouseLeave = () => {
         setShowMoveForm(false);
     };
@@ -58,31 +57,22 @@ export default function Task({ task, listId=null, onDelete, onArrowClick, isSubT
         <div className="task-container"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}>
-            {console.log("task", task.id,"hasSubtask", hasSubtasks)}
-            {hasSubtasks && ( 
+            {console.log("task", task.id, "hasSubtask", hasSubtasks)}
+            {hasSubtasks && (
                 <div className="arrow-container" onClick={handleArrowClick}>
                     <i>{showArrowContainer ? "-" : "+"}</i>
-                </div>   
-            ) 
-            }           
-            <input type="checkbox" onClick={handleDelete}/>
+                </div>
+            )
+            }
+            <input type="checkbox" onClick={handleDelete} />
             <span>{task.title}</span>
-            
-            {showMoveForm && (
+
+            {!isSubTask && !isSubSubtask && showMoveForm && (
                 <MoveTaskForm
-                task={task}
-                // lists={lists}
-                onMove={handleMove}
+                    task={task}
+                    onMove={handleMove}
                 />
             )}
-            {/* {showSubtasks && (
-                <SubtaskList
-                subtasks={task.subtasks}
-                listId={listId}
-                onDelete={onDelete}
-                onArrowClick={onArrowClick}
-                />
-            )} */}
         </div>
     );
 }
