@@ -71,9 +71,20 @@ export default function List({ list, onDeleteList }) {
 	};
 
 	// Handle the arrow click button click
-	const handleArrowClick = () => {
-		// Toggle the showSubtasks state variable
-		setShowSubtasks(!showSubtasks);
+	// const handleArrowClick = () => {
+	// 	// Toggle the showSubtasks state variable
+	// 	setShowSubtasks(!showSubtasks);
+	// };
+
+	// Initialize state to an empty object
+	const [visibleSubtasks, setVisibleSubtasks] = useState({});
+
+	// Toggle visibility when a parent task is clicked
+	const handleArrowClick = (taskId) => {
+		setVisibleSubtasks((prevState) => ({
+			...prevState,
+			[taskId]: !prevState[taskId],
+		}));
 	};
 
 	// Return the list component
@@ -91,10 +102,12 @@ export default function List({ list, onDeleteList }) {
 									task={task}
 									listId={list.id}
 									onDelete={handleDeleteTask}
-									onArrowClick={handleArrowClick}
+									onArrowClick={() =>
+										handleArrowClick(task.id)
+									}
 								/>
 								{/* Render SubtaskList only if there are subtasks */}
-								{showSubtasks && (
+								{visibleSubtasks[task.id] && (
 									<SubtaskList
 										taskId={task.id}
 										handleDeleteTask={handleDeleteTask}
