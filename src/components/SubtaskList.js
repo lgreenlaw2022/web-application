@@ -3,11 +3,9 @@ import { useApi } from "../contexts/ApiProvider";
 import Task from "./Task";
 import "./css/Task.css";
 
-function SubtaskList({ taskId, handleDeleteTask, handleTaskArrowClick }) {
+function SubtaskList({ taskId, handleDeleteTask }) {
     const [subtasks, setSubtasks] = useState([]);
     const [subsubtasksMap, setSubsubtasksMap] = useState({});
-    const [currTask, setCurrTask] = useState(taskId);
-    const [isSubSubtask, setIsSubSubtask] = useState(false);
     const [showSubsubtasks, setShowSubsubtasks] = useState(false);
     const api = useApi();
 
@@ -23,7 +21,7 @@ function SubtaskList({ taskId, handleDeleteTask, handleTaskArrowClick }) {
             }
         };
         fetchSubtasks();
-    }, []); //currTask
+    }, [subtasks]);
 
     useEffect(() => {
         const fetchSubsubtasks = async (subtaskId) => {
@@ -47,8 +45,6 @@ function SubtaskList({ taskId, handleDeleteTask, handleTaskArrowClick }) {
     const handleArrowClick = () => {
         setShowSubsubtasks(!showSubsubtasks); // Toggle the showSubtasks state variable
     }
-
-
 
     return (
         subtasks && subtasks.length > 0 && (

@@ -90,14 +90,7 @@ export default function List({ list, onDeleteList }) {
 
     const handleDeleteList = () => {
         onDeleteList(list.id);
-        // setDeleted(true);
     };
-
-    // const handleArrowClick = () => {
-    //     setShowArrowContainer(!showArrowContainer);
-    //     setShowSubtasks(!showSubtasks); // Toggle the showSubtasks state variable
-    //     onArrowClick(task.id);
-    // };
 
     const handleArrowClick = () => {
         setShowSubtasks(!showSubtasks); // Toggle the showSubtasks state variable
@@ -127,7 +120,6 @@ export default function List({ list, onDeleteList }) {
                                 {showSubtasks && (
                                     <SubtaskList taskId={task.id}
                                         handleDeleteTask={handleDeleteTask}
-                                    // onArrowClick={handleArrowClick}
                                     />
                                 )}
                             </div>
