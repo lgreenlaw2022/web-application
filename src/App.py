@@ -42,8 +42,6 @@ def get_lists(user_id):
 
 @app.route("/lists/<int:list_id>/tasks", methods=["GET"])
 def get_tasks(list_id):
-    print("___GETTING TASK FOR LIST___")
-    print("list id", list_id)
     if list_id is None:
         return jsonify({"error": "List not found"}), 404
 
@@ -64,7 +62,6 @@ def get_tasks(list_id):
 @app.route("/tasks/<int:task_id>/subtasks", methods=["GET"])
 def get_subtasks(task_id):
     # Find the task with the specified ID
-    print("___GETTING SUBTASKS FOR TASK___", task_id)
     task = Task.query.filter_by(id=task_id).first()
 
     # If the task exists, get its subtasks
@@ -72,9 +69,7 @@ def get_subtasks(task_id):
         subtask_relationships = TaskRelationship.query.filter_by(
             parent_task_id=task_id
         ).all()
-        print("subtask relationships", subtask_relationships)
         subtask_ids = [ul.child_task_id for ul in subtask_relationships]
-        print("subtask ids", subtask_ids)
 
         subtasks = Task.query.filter(Task.id.in_(subtask_ids)).all()
         subtask_data = [
@@ -92,6 +87,7 @@ def create_list():
     if not title:
         return jsonify({"error": "Text is required"}), 400
 
+    # Create a new list object with the extracted data
     list = List(title=title)
     db.session.add(list)
     db.session.commit()
@@ -116,13 +112,13 @@ def delete_list(list_id):
 
 @app.route("/connecttolist", methods=["POST"])
 def connect_to_list():
-    print("___in connect to list___")
     data = request.get_json()
     user_id = data.get("user_id")
     list_id = data.get("list_id")
     if not user_id or not list_id:
         return jsonify({"error": "User ID and List ID are required"}), 400
 
+    # Create a new UserList object with the extracted data
     relationship = UserList(user_id=user_id, list_id=list_id)
     print("added relationship", relationship)
     db.session.add(relationship)
@@ -133,20 +129,14 @@ def connect_to_list():
 
 @app.route("/tasks", methods=["POST"])
 def add_task():
-    # Get the request data
     data = request.get_json()
-
     # Extract the task title and list ID from the request data
     title = data.get("title")
-
     # Create a new task object with the extracted data
     task = Task(title=title)
-
-    # Add the task to the database
     db.session.add(task)
     db.session.commit()
 
-    # Return a success response
     return (
         jsonify(
             {"message": "Task added successfully", "success": True, "task_id": task.id}
@@ -171,8 +161,6 @@ def delete_task(task_id):
 
 @app.route("/list-task-relationship", methods=["POST"])
 def create_list_task_relationship():
-    print("___in create list task relationship___")
-    # Get the request data
     data = request.get_json()
 
     # Extract the list ID and task ID from the request data
@@ -181,13 +169,9 @@ def create_list_task_relationship():
 
     # Create a new ListTaskRelationship object with the extracted data
     relationship = ListRelationship(list_id=list_id, task_id=task_id)
-    print("**************TASK LIST RELATIONSHIP ADDED", relationship)
-
-    # Add the relationship to the database
     db.session.add(relationship)
     db.session.commit()
 
-    # Return a success response
     return jsonify({"message": "List-Task Relationship created", "success": True}), 201
 
 
@@ -215,7 +199,6 @@ def delete_list_task_relationship(list_id, task_id):
 
 @app.route("/task-subtask-relationship", methods=["POST"])
 def create_task_subtask_relationship():
-    # Get the request data
     data = request.get_json()
 
     # Extract the parent task ID and child task ID from the request data
@@ -226,30 +209,25 @@ def create_task_subtask_relationship():
     relationship = TaskRelationship(
         parent_task_id=parent_task_id, child_task_id=child_task_id
     )
-
-    # Add the relationship to the database
     db.session.add(relationship)
     db.session.commit()
 
-    # Return a success response
     return jsonify({"message": "Task-Subtask Relationship created"}), 201
 
 
 @app.route("/auth/login", methods=["POST"])
 def get_user():
-    print("this is being called")
     data = json.loads(request.get_json())
-    # data = request.get_json()
-
     userData = data["userData"]
     password = data["password"]
-    print(userData, password)
-
+    # verify all fields are present
     if not userData:
         return jsonify({"message": "Username is required"}), 400
 
     if not password:
         return jsonify({"message": "Password is required"}), 400
+
+    # check if user exists
     user = (
         db.session.query(User)
         .filter(
@@ -257,20 +235,15 @@ def get_user():
         )  # TODO: email probably shouldn't be case sensitive
         .first()
     )
-    print(user)
     if user is None:
         return jsonify({"message": "User doesn't exist", "success": False}), 400
 
-    # stored_password = user.password  # TODO: don't need this
-    print("Stored password:", user.password)
-
+    # check if password is correct using hashing
     if not bcrypt.checkpw(password.encode("utf-8"), user.password):
-        print("wrong passwrod")
         return jsonify({"message": "Password is wrong", "success": False}), 400
 
     db.session.commit()
     print("api successfully logged in user", user.id)
-    print("user dict", user.id, user.username, user.email, user.password)
     return jsonify({"user": user.id, "message": "User logged in", "success": True}), 201
 
 
@@ -280,31 +253,19 @@ def add_user():
     username = data["username"]
     email = data["email"]
     password = data["password"]
+    # verify all fields are present
     if not username:
         return jsonify({"error": "Username is required"}), 400
     if not email:
         return jsonify({"error": "Email is required"}), 400
     if not password:
         return jsonify({"error": "Password is required"}), 400
-    # salt = password[:29]
+    # hash the password before storing it
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
-
+    # add the user to the database
     user = User(username=username, email=email, password=hashed_password)
     print("api successfully added user")
     db.session.add(user)
     db.session.commit()
 
     return jsonify({"message": "User created successfully"}), 201
-
-
-# clear all added tasks (for dev only)
-def reset_database():
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-
-
-@app.route("/reset-database", methods=["GET"])
-def reset_db():
-    reset_database()
-    return "Database reset successfully"

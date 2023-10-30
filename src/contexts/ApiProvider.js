@@ -1,18 +1,20 @@
-import { createContext, useContext } from 'react';
-import ApiClient from '../ApiClient';
+import { createContext, useContext } from "react";
+import ApiClient from "../ApiClient";
 
+// Create a context for API
 const ApiContext = createContext();
 
+// Export a function to provide API
 export default function ApiProvider({ children }) {
-  const api = new ApiClient();
+	// Create a new API client
+	const api = new ApiClient();
 
-  return (
-    <ApiContext.Provider value={api}>
-      {children}
-    </ApiContext.Provider>
-  );
+	// Return the API client in the context
+	return <ApiContext.Provider value={api}>{children}</ApiContext.Provider>;
 }
 
+// Export a function to use the API
 export function useApi() {
-  return useContext(ApiContext);
+	// Return the API from the context
+	return useContext(ApiContext);
 }

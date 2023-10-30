@@ -1,30 +1,31 @@
 import PageHeader from "../components/PageHeader";
 import Body from "../components/Body";
-import { useUser } from '../contexts/UserProvider';
-import { useNavigate, Link } from 'react-router-dom';
+import { useUser } from "../contexts/UserProvider";
+import { Link } from "react-router-dom";
 
 export default function ListsPage() {
-    const { user } = useUser();
-      
-    return (
-        <div>
-            {console.log('rendering ListsPage component for user', user)}
-            <PageHeader />
-            {console.log('user', user)}
-            {user === undefined ?
-                <div className="spinner-border" role="status">
-                    <span className="sr-only">Loading...</span>
-                </div>
-            :
-                <>
-                    {user === null ?
-                        <p>User not found. <Link to="/login">Login</Link></p>
-                    :
-                    <Body write={true}/>
-                    }
-                </>
-                
-            }
-        </div>
-    );
+	// Get user from useUser hook
+	const { user } = useUser();
+
+	return (
+		<div>
+			<PageHeader />
+			{user === undefined ? (
+				<div className="spinner-border" role="status">
+					<span className="sr-only">Loading...</span>
+				</div>
+			) : (
+				<>
+					{/* reroute user to login page if none is signed */}
+					{user === null ? (
+						<p>
+							User not found. <Link to="/login">Login</Link>
+						</p>
+					) : (
+						<Body write={true} />
+					)}
+				</>
+			)}
+		</div>
+	);
 }

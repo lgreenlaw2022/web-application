@@ -8,22 +8,29 @@ import UserProvider from "./contexts/UserProvider";
 import "./App.css";
 
 export default function App() {
-  return (
-    <div className="App">
-      <BrowserRouter>
-        <ApiProvider>
-          <UserProvider>
-            <Header />
-            <Routes>
-              {console.log("Rendering route component")}
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegistrationPage />} />
-              <Route path="/lists" element={<ListsPage />} />
-              <Route path="*" element={<Navigate to="/login" />} />
-            </Routes>
-          </UserProvider>
-        </ApiProvider>
-      </BrowserRouter>
-    </div>
-  );
+	return (
+		<div className="App">
+			<BrowserRouter>
+				<ApiProvider>
+					<UserProvider>
+						<Header />
+						<Routes>
+							{/* route to login page first */}
+							<Route path="/login" element={<LoginPage />} />
+							<Route
+								path="/register"
+								element={<RegistrationPage />}
+							/>
+							<Route path="/lists" element={<ListsPage />} />
+							{/* default route to login page */}
+							<Route
+								path="*"
+								element={<Navigate to="/login" />}
+							/>
+						</Routes>
+					</UserProvider>
+				</ApiProvider>
+			</BrowserRouter>
+		</div>
+	);
 }

@@ -17,6 +17,7 @@ const WriteTask = ({ prop_lists }) => {
 	const [numTasks, setNumTasks] = useState(null);
 	const api = useApi();
 
+	// TODO: do not know if this is needed
 	useEffect(() => {
 		if (prop_lists && prop_lists.length > 0) {
 			setLists(prop_lists);
