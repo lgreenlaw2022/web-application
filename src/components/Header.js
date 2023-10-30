@@ -1,29 +1,31 @@
-import { useUser } from '../contexts/UserProvider';
-import { useNavigate } from 'react-router-dom';
-import './css/Header.css';
-
+import { useUser } from "../contexts/UserProvider";
+import { useNavigate } from "react-router-dom";
+import "./css/Header.css";
 
 export default function Header() {
-    const { user, logout } = useUser();
-    const navigate = useNavigate();
+	// Get user from context
+	const { user, logout } = useUser();
+	// Get navigate function from react-router-dom
+	const navigate = useNavigate();
 
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
-    };
+	// Create logout function
+	const handleLogout = () => {
+		// Call logout function from context
+		logout();
+		// Call navigate function from react-router-dom
+		navigate("/login");
+	};
 
-    return (
-         <div className="header">
-            <h1 className="logo">Taski</h1>
-            {user && (
-                <button classname="logout-button" onClick={handleLogout}>Logout</button>
-            )}
-        </div>
-    );
+	// Render header
+	return (
+		<div className="header">
+			<h1 className="logo">Taski</h1>
+			{user && (
+				// Render logout button if user is logged in
+				<button classname="logout-button" onClick={handleLogout}>
+					Logout
+				</button>
+			)}
+		</div>
+	);
 }
-
-
-
-
-
-        
