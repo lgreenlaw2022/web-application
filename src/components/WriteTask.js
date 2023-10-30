@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Dropdown } from "@fluentui/react";
+import { Dropdown, getBackgroundShade } from "@fluentui/react";
 import Form from "react-bootstrap/Form";
 import { useApi } from "../contexts/ApiProvider";
+import "./css/WriteTask.css";
 
 const WriteTask = ({ prop_lists }) => {
   const [lists, setLists] = useState([]);
@@ -27,7 +28,6 @@ const WriteTask = ({ prop_lists }) => {
       const fetchTasks = async () => {
         console.log("fetching tasks for write form for list", selectedList.id);
         const response = await api.get(`/lists/${selectedList.id}/tasks`);
-        // const response = a wait api.get(`/lists/5/tasks`);
         console.log(
           "retrieved tasks",
           response.body.num_tasks,
@@ -180,125 +180,126 @@ const WriteTask = ({ prop_lists }) => {
   };
 
   return (
-    <form className="write-task-form" onSubmit={handleSubmit}>
-      <div className="write-task-field">
-        <div className="write-task-field">
-          <label className="write-task-label" htmlFor="taskTitle">
-            Task Title
-          </label>
-          <input
-            className="write-task-input"
-            id="taskTitle"
-            type="text"
-            value={taskTitle}
-            onChange={(event) => setTaskTitle(event.target.value)}
-          />
-        </div>
-        <label className="write-task-label" htmlFor="list">
-          List
-        </label>
-        <Dropdown
-          className="write-task-dropdown"
-          id="list"
-          options={lists.map((list) => ({
-            key: JSON.stringify({ id: list.id, title: list.title }),
-            text: list.title,
-          }))}
-          onChange={handleListChange}
-          selectedKey={
-            selectedList
-              ? JSON.stringify({
-                id: selectedList["id"],
-                title: selectedList["title"],
-              })
-              : null
-          }
-        />
-        {console.log("_____SELECTED LIST_____", selectedList)}
-        {console.log("_____SUB TASKS_____", tasks)}
-      </div>
+    <div>
+      <form className="WriteTask" onSubmit={handleSubmit}>
+        <div >
+          <div>
+            <label htmlFor="taskTitle">
+              Task Title
+            </label>
+            <input
 
-      {selectedList && tasks.length > 0 && (
-        <div className="write-task-field">
-          {console.log("Is Subtask")}
-          <label className="write-task-label" htmlFor="isSubtask">
-            Is Subtask
-          </label>
-          <Form.Check
-            className="write-task-checkbox"
-            id="isSubtask"
-            checked={isSubtask}
-            onChange={handleSubtaskCheckboxChange}
-          />
-        </div>
-      )}
-      {isSubtask && tasks.length > 0 && (
-        <div className="write-task-field">
-          <label className="write-task-label" htmlFor="task">
-            Parent Task
+              id="taskTitle"
+              type="text"
+              value={taskTitle}
+              onChange={(event) => setTaskTitle(event.target.value)}
+            />
+          </div>
+          <label htmlFor="list">
+            List
           </label>
           <Dropdown
-            className="write-task-dropdown"
-            id="task"
-            options={tasks.map((task) => ({
-              key: JSON.stringify({ id: task.id, title: task.title }),
-              text: task.title,
+
+            id="list"
+            options={lists.map((list) => ({
+              key: JSON.stringify({ id: list.id, title: list.title }),
+              text: list.title,
             }))}
+            onChange={handleListChange}
             selectedKey={
-              selectedTask
+              selectedList
                 ? JSON.stringify({
-                  id: selectedTask.id,
-                  title: selectedTask.title,
+                  id: selectedList["id"],
+                  title: selectedList["title"],
                 })
                 : null
             }
-            onChange={handleTaskChange}
           />
+          {console.log("_____SELECTED LIST_____", selectedList)}
+          {console.log("_____SUB TASKS_____", tasks)}
         </div>
-      )}
-      {selectedTask && subtasks.length > 0 && (
+
+        {selectedList && tasks.length > 0 && (
+          <div>
+            {console.log("Is Subtask")}
+            <label htmlFor="isSubtask">
+              Is Subtask
+            </label>
+            <Form.Check
+              id="isSubtask"
+              checked={isSubtask}
+              onChange={handleSubtaskCheckboxChange}
+            />
+          </div>
+        )}
+        {isSubtask && tasks.length > 0 && (
+          <div >
+            <label htmlFor="task">
+              Parent Task
+            </label>
+            <Dropdown
+              className="dropdown"
+              id="task"
+              options={tasks.map((task) => ({
+                key: JSON.stringify({ id: task.id, title: task.title }),
+                text: task.title,
+              }))}
+              selectedKey={
+                selectedTask
+                  ? JSON.stringify({
+                    id: selectedTask.id,
+                    title: selectedTask.title,
+                  })
+                  : null
+              }
+              onChange={handleTaskChange}
+            />
+          </div>
+        )}
+        {selectedTask && subtasks.length > 0 && (
+          <div className="write-task-field">
+            {console.log("Is Sub-Subtask")}
+            <label className="write-task-label" htmlFor="isSubSubtask">
+              Is Sub-Subtask
+            </label>
+            <Form.Check
+              className="write-task-checkbox"
+              id="isSubSubtask"
+              checked={isSubSubtask}
+              onChange={handleSubSubtaskCheckboxChange}
+            />
+          </div>
+        )}
+        {isSubSubtask && subtasks.length > 0 && (
+          <div className="write-task-field">
+            {console.log("Is Parent Subtask")}
+            <label className="write-task-label" htmlFor="subtask">
+              Parent Subtask
+            </label>
+            <Dropdown
+              className="write-task-dropdown"
+              id="subtask"
+              options={subtasks.map((subtask) => ({
+                key: JSON.stringify({ id: subtask.id, title: subtask.title }),
+                text: subtask.title,
+              }))}
+              selectedKey={
+                selectedSubtask
+                  ? JSON.stringify({
+                    id: selectedSubtask.id,
+                    title: selectedSubtask.title,
+                  })
+                  : null
+              }
+              onChange={handleSubtaskChange}
+            />
+          </div>
+        )}
         <div className="write-task-field">
-          {console.log("Is Sub-Subtask")}
-          <label className="write-task-label" htmlFor="isSubSubtask">
-            Is Sub-Subtask
-          </label>
-          <Form.Check
-            className="write-task-checkbox"
-            id="isSubSubtask"
-            checked={isSubSubtask}
-            onChange={handleSubSubtaskCheckboxChange}
-          />
+          <button type="submit">Add Task</button>
         </div>
-      )}
-      {isSubSubtask && subtasks.length > 0 && (
-        <div className="write-task-field">
-          {console.log("Is Parent Subtask")}
-          <label className="write-task-label" htmlFor="subtask">
-            Parent Subtask
-          </label>
-          <Dropdown
-            className="write-task-dropdown"
-            id="subtask"
-            options={subtasks.map((subtask) => ({
-              key: JSON.stringify({ id: subtask.id, title: subtask.title }),
-              text: subtask.title,
-            }))}
-            selectedKey={
-              selectedSubtask
-                ? JSON.stringify({
-                  id: selectedSubtask.id,
-                  title: selectedSubtask.title,
-                })
-                : null
-            }
-            onChange={handleSubtaskChange}
-          />
-        </div>
-      )}
-      <div className="write-task-field">
-        <button type="submit">Add Task</button>
-      </div>
-    </form>
+      </form>
+    </div >
   );
 };
 
