@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../contexts/UserProvider";
 import InputField from "../components/InputField";
-import { Button, Form, Alert } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import "./css/LoginPage.css";
 
 const LoginPage = () => {

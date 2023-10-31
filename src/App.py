@@ -3,6 +3,7 @@ from flask_cors import CORS, cross_origin
 from Models import User, List, Task, UserList, ListRelationship, TaskRelationship, db
 import json
 import bcrypt
+from sqlalchemy import func
 
 app = Flask(__name__)
 CORS(app, origins="*", supports_credentials=True)
@@ -18,15 +19,11 @@ def get_api():
     return "Welcome to the task manager application!"
 
 
-@cross_origin(
-    origin="*", headers=["Content- Type", "Authorization"]
-)  # TODO: test if this is neccessary
+@cross_origin(origin="*", headers=["Content- Type", "Authorization"])
 @app.route("/lists/<int:user_id>", methods=["GET"])
 def get_lists(user_id):
     if user_id is None:
         return jsonify({"error": "User not found"}), 404
-    print("___In api lists get___")
-
     # Get the list of list_ids for the user
     user_lists = UserList.query.filter_by(user_id=user_id).all()
     list_ids = [ul.list_id for ul in user_lists]
@@ -36,7 +33,6 @@ def get_lists(user_id):
 
     # Create a list of dictionaries containing the id and title of each list
     list_data = [{"id": lst.id, "title": lst.title} for lst in lists]
-    print("api lists for user", user_id, user_lists, list_ids)
     return jsonify(list_data), 200
 
 
@@ -46,15 +42,12 @@ def get_tasks(list_id):
         return jsonify({"error": "List not found"}), 404
 
     list_tasks = ListRelationship.query.filter_by(list_id=list_id).all()
-    print("list tasks", list_tasks)
     task_ids = [ul.task_id for ul in list_tasks]
-    print("task ids", task_ids)
 
     tasks = Task.query.filter(Task.id.in_(task_ids)).all()
 
     # Create a list of dictionaries containing the id and title of each list
     task_data = [{"id": task.id, "title": task.title} for task in tasks]
-    print("task data retrieved for the api call", task_data, len(task_data))
 
     return jsonify({"tasks": task_data, "num_tasks": len(task_data)}), 200
 
@@ -231,8 +224,10 @@ def get_user():
     user = (
         db.session.query(User)
         .filter(
-            (User.email == userData) | (User.username == userData)
-        )  # TODO: email probably shouldn't be case sensitive
+            # email is not case sensitive
+            (User.email.ilike(func.lower(userData)))
+            | (User.username == userData)
+        )
         .first()
     )
     if user is None:

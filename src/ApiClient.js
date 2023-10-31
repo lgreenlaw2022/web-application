@@ -70,13 +70,6 @@ export default class ApiClient {
 		return response.body;
 	}
 
-	// TODO: don't think I use this anywhere
-	// Check if the user is authenticated
-	isAuthenticated() {
-		// Check if the access token is stored in local storage
-		return localStorage.getItem("accessToken") !== null;
-	}
-
 	// Make a GET request to the API
 	async get(url, query, options) {
 		return this.request({ method: "GET", url, query, ...options });

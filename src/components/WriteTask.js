@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Dropdown, getBackgroundShade } from "@fluentui/react";
+import { Dropdown } from "@fluentui/react";
 import Form from "react-bootstrap/Form";
 import { useApi } from "../contexts/ApiProvider";
 import "./css/WriteTask.css";

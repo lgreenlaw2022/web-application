@@ -1,5 +1,3 @@
-import React from "react";
-
 // Export a function called InputField which takes an object of props as an argument
 export default function InputField({
 	// The name of the field

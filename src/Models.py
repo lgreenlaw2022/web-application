@@ -6,9 +6,7 @@ db = SQLAlchemy()
 class User(db.Model):
     __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(
-        db.String(50), unique=True, nullable=False
-    )  # TODO should this have a unique constraint?
+    username = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
 
@@ -28,7 +26,6 @@ class User(db.Model):
 
 class TaskRelationship(db.Model):
     __tablename__ = "task_relationship"
-    # TODO: may need to add the id here rather than having the composite key
     parent_task_id = db.Column(db.Integer, db.ForeignKey("task.id"), primary_key=True)
     child_task_id = db.Column(db.Integer, db.ForeignKey("task.id"), primary_key=True)
 
