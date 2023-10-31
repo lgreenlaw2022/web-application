@@ -81,10 +81,45 @@ export default function List({ list, onDeleteList }) {
 		}));
 	};
 
+	// Add state variables for editing list name
+	const [isEditing, setIsEditing] = useState(false);
+	const [newName, setNewName] = useState(list.title);
+
+	// Add functions to handle editing list name
+	const handleEdit = () => {
+		setIsEditing(true);
+	};
+
+	const handleSave = async () => {
+		try {
+			const response = await api.put(`/lists/${list.id}`, {
+				title: newName,
+			});
+			if (response.ok) {
+				setIsEditing(false);
+			} else {
+				console.error(response.error);
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	// Return the list component
 	return (
 		<div className="lists-container">
-			<h4 className="lists-heading">{list.title}</h4>
+			{isEditing ? (
+				<input
+					type="text"
+					value={newName}
+					onChange={(e) => setNewName(e.target.value)}
+				/>
+			) : (
+				<h4 className="lists-heading">{list.title}</h4>
+			)}
+			<button onClick={isEditing ? handleSave : handleEdit}>
+				{isEditing ? "Save" : "Edit"}
+			</button>
 			<button onClick={handleDeleteList}>Delete</button>
 			{numTasks > 0 && (
 				<div>

@@ -60,11 +60,36 @@ export default function Task({
 	// function to show move form
 	const handleMouseEnter = () => {
 		setShowMoveForm(true);
+		setShowEditButton(true);
 	};
 
 	// function to hide move form
 	const handleMouseLeave = () => {
 		setShowMoveForm(false);
+		setShowEditButton(false);
+	};
+
+	const [isEditing, setIsEditing] = useState(false);
+	const [newName, setNewName] = useState(task.title);
+	const [showEditButton, setShowEditButton] = useState(false);
+
+	const handleEdit = () => {
+		setIsEditing(true);
+	};
+
+	const handleSave = async () => {
+		try {
+			const response = await api.put(`/tasks/${task.id}`, {
+				title: newName,
+			});
+			if (response.ok) {
+				setIsEditing(false);
+			} else {
+				console.error(response.error);
+			}
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	return deleted ? null : (
@@ -80,7 +105,20 @@ export default function Task({
 				</div>
 			)}
 			<input type="checkbox" onClick={handleDelete} />
-			<span>{task.title}</span>
+			{isEditing ? (
+				<input
+					type="text"
+					value={newName}
+					onChange={(e) => setNewName(e.target.value)}
+				/>
+			) : (
+				<h4 className="task-heading">{task.title}</h4>
+			)}
+			{showEditButton && (
+				<button onClick={isEditing ? handleSave : handleEdit}>
+					{isEditing ? "Save" : "Edit"}
+				</button>
+			)}
 			{/* only allow move form to appear for parent tasks */}
 			{!isSubTask && !isSubSubtask && showMoveForm && (
 				<MoveTaskForm onMove={handleMove} />

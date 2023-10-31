@@ -88,6 +88,22 @@ def create_list():
     return jsonify(list.to_dict(), {"success": True}), 201
 
 
+@app.route("/lists/<int:list_id>", methods=["PUT"])
+def update_list(list_id):
+    new_title = request.json.get("title")
+    if new_title is None:
+        return jsonify({"message": "Title is required"}), 400
+
+    list = List.query.get(list_id)
+    if list is None:
+        return jsonify({"message": "List not found"}), 404
+
+    list.title = new_title
+    db.session.commit()
+
+    return jsonify({"message": "List renamed", "success": True}), 200
+
+
 @app.route("/lists/<int:list_id>", methods=["DELETE"])
 def delete_list(list_id):
     # Find the list with the specified ID
@@ -150,6 +166,22 @@ def delete_task(task_id):
         return jsonify({"message": "Task deleted", "success": True}), 200
     else:
         return jsonify({"error": "Task not found", "success": False}), 404
+
+
+@app.route("/tasks/<int:task_id>", methods=["PUT"])
+def update_task(task_id):
+    new_title = request.json.get("title")
+    if new_title is None:
+        return jsonify({"message": "Title is required"}), 400
+
+    task = Task.query.get(task_id)
+    if task is None:
+        return jsonify({"message": "Task not found"}), 404
+
+    task.title = new_title
+    db.session.commit()
+
+    return jsonify({"message": "Task updated", "success": True}), 200
 
 
 @app.route("/list-task-relationship", methods=["POST"])
