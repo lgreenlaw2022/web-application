@@ -94,5 +94,6 @@ The database is designed to store the following. The  blueprints are created in 
 6. **UserList**: This model maps the relationship between a user and a list, indicating that the list belongs to the user. It has fields for id, user_id, and list_id.
 
 
-
+## AI Tools
+AI tools were used for every part of this assignment (flask, react, readme, comments, etc). I used it almost like a pair programmer. I used a combination of Github Copilot, Chat GPT and CodeGeeX.
 
