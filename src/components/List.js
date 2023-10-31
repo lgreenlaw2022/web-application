@@ -16,14 +16,6 @@ export default function List({ list, onDeleteList }) {
 		const fetchTasks = async () => {
 			// Get the tasks from the API
 			const response = await api.get(`/lists/${list.id}/tasks`);
-			console.log(
-				"retrieved tasks",
-				response,
-				response.body,
-				response.body["numTasks"],
-				response.body.num_tasks,
-				response.body.tasks
-			);
 			// If the response is ok, set the tasks state variable to
 			// the response body tasks and set the numTasks state variable to
 			// the response body numTasks
@@ -31,11 +23,6 @@ export default function List({ list, onDeleteList }) {
 				const loaded_tasks = response.body.tasks;
 				setNumTasks(response.body.num_tasks);
 				setTasks(loaded_tasks);
-				console.log(`tasks set to ${loaded_tasks} for list ${list.id}`);
-				console.log(
-					"new tasks value after SetTask and then setTasksArray is",
-					tasks
-				);
 			} else {
 				console.error(response.error);
 			}
@@ -45,16 +32,13 @@ export default function List({ list, onDeleteList }) {
 
 	// Handle the delete task button click
 	const handleDeleteTask = async (taskId) => {
-		console.log("handleDeleteTask called with taskId:", taskId);
 		try {
 			// Delete the task from the API
 			const response = await api.delete(`/tasks/${taskId}`);
-			console.log("response:", response);
 			// If the response is ok, filter the tasks state variable to remove
 			//the deleted task and set the tasks state variable to the updated tasks
 			if (response.ok) {
 				const updatedTasks = tasks.filter((t) => t.id !== taskId);
-				console.log("updatedTasks:", updatedTasks);
 				setTasks(updatedTasks);
 			} else {
 				console.error(response.error);

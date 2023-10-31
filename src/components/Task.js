@@ -21,7 +21,6 @@ export default function Task({
 	useEffect(() => {
 		const fetchSubtasks = async () => {
 			const response = await api.get(`/tasks/${task.id}/subtasks`);
-			console.log("fetch subtasks for task", response, response.body);
 			if (response.ok) {
 				const loaded_subtasks = response.body.subtasks;
 				setHasSubtasks(loaded_subtasks.length > 0);

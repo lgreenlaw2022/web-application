@@ -27,15 +27,13 @@ export default function UserProvider({ children }) {
 
 		const user_id = response.user;
 		const message = response.message;
-		// console.log("api login response", response, message, user_id);
 
 		// If the login is successful, set the user in the state.
 		if (response.success) {
 			// If the login is successful, set the user in the state.
-			// console.log("login success", response.user);
+
 			setUser(response.user);
 			sessionStorage.setItem("user", JSON.stringify(response.user));
-			// console.log("user stored in session storage:", response.user);
 		} else {
 			// Handle authentication errors here.
 			console.error("Login failed:", message);
@@ -51,14 +49,11 @@ export default function UserProvider({ children }) {
 
 	// Check if the user is already logged in.
 	useEffect(() => {
-		// console.log(isSessionStorageAvailable());
 		const storedUser = sessionStorage.getItem("user");
 		if (storedUser) {
 			setUser(JSON.parse(storedUser));
-			// console.log("Stored User Data:", storedUser);
 		}
 	}, []);
-	// console.log("UserProvider user", user);
 
 	// Return the user data.
 	return (

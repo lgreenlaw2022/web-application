@@ -16,10 +16,16 @@ flask run --port=8000
 ***Note***: this project is configured to run the backend from port 8000 not 5000.
 
 
+TODO: maybe delete the users or change their info to something he will nto put in as well --- include database in submition righjt?
+TODO: all passwords are 123456
+
+
 ## Project Information
 
 ## Overview
 This project uses a combination of React and Flask to create a web application that allows users to create and manage to do lists.
+
+**video link** https://www.loom.com/share/060c2ff24f544583bd4d5a33114eb478?sid=e84b5818-f486-4f05-8b63-2638ccea1240
 
 ### Features
 

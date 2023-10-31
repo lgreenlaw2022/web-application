@@ -154,20 +154,6 @@ def add_task():
     )
 
 
-@app.route("/tasks/<int:task_id>", methods=["DELETE"])
-def delete_task(task_id):
-    # Find the task with the specified ID
-    task = Task.query.filter_by(id=task_id).first()
-
-    # If the task exists, delete it from the database
-    if task:
-        db.session.delete(task)
-        db.session.commit()
-        return jsonify({"message": "Task deleted", "success": True}), 200
-    else:
-        return jsonify({"error": "Task not found", "success": False}), 404
-
-
 @app.route("/tasks/<int:task_id>", methods=["PUT"])
 def update_task(task_id):
     new_title = request.json.get("title")
@@ -182,6 +168,20 @@ def update_task(task_id):
     db.session.commit()
 
     return jsonify({"message": "Task updated", "success": True}), 200
+
+
+@app.route("/tasks/<int:task_id>", methods=["DELETE"])
+def delete_task(task_id):
+    # Find the task with the specified ID
+    task = Task.query.filter_by(id=task_id).first()
+
+    # If the task exists, delete it from the database
+    if task:
+        db.session.delete(task)
+        db.session.commit()
+        return jsonify({"message": "Task deleted", "success": True}), 200
+    else:
+        return jsonify({"error": "Task not found", "success": False}), 404
 
 
 @app.route("/list-task-relationship", methods=["POST"])

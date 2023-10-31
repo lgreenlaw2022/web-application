@@ -17,13 +17,7 @@ export default function Body() {
 	// Fetch the lists from the api when the lists state is updated
 	useEffect(() => {
 		const fetchLists = async () => {
-			console.log("trying to load lists, loggedInUserId", user);
 			const response = await api.get(`/lists/${user}`);
-			console.log(
-				"trying to load lists, respose.body",
-				response,
-				response.body
-			);
 			setLists(response.body);
 		};
 		fetchLists();
@@ -37,10 +31,8 @@ export default function Body() {
 
 	// Handle the delete of a list
 	const handleDeleteList = async (list_id) => {
-		console.log("handleDeleteList called with listId:", list_id);
 		try {
 			const response = await api.delete(`/lists/${list_id}`);
-			console.log("response:", response);
 			if (response.ok) {
 				const updatedLists = lists.filter(
 					(list) => list.id !== list_id
@@ -56,8 +48,6 @@ export default function Body() {
 
 	return (
 		<div className="body-container">
-			{console.log("lists:", lists)}
-			{console.log("body thinks user is", user)}
 			<WriteList showList={updateLists} />
 			<WriteTask prop_lists={lists} />
 			<div className="lists">

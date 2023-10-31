@@ -13,7 +13,6 @@ export default function SubtaskList({ taskId, handleDeleteTask }) {
 	useEffect(() => {
 		const fetchSubtasks = async () => {
 			const response = await api.get(`/tasks/${taskId}/subtasks`);
-			console.log("fetch subtasks for task", response, response.body);
 			if (response.ok) {
 				const loaded_subtasks = response.body.subtasks;
 				setSubtasks(loaded_subtasks);
@@ -28,11 +27,6 @@ export default function SubtaskList({ taskId, handleDeleteTask }) {
 	useEffect(() => {
 		const fetchSubsubtasks = async (subtaskId) => {
 			const response = await api.get(`/tasks/${subtaskId}/subtasks`);
-			console.log(
-				"fetch subsubtasks for subtask",
-				response,
-				response.body
-			);
 			if (response.ok) {
 				const loaded_subsubtasks = response.body.subtasks;
 				setSubsubtasksMap((prevMap) => ({

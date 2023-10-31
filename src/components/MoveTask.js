@@ -15,13 +15,7 @@ export default function MoveTaskForm({ onMove }) {
 	//this effect is used to fetch the lists that the user has access to
 	useEffect(() => {
 		const fetchLists = async () => {
-			console.log("trying to load lists, loggedInUserId", user);
 			const response = await api.get(`/lists/${user}`);
-			console.log(
-				"trying to load lists, respose.body",
-				response,
-				response.body
-			);
 			setLists(response.body);
 		};
 		fetchLists();
