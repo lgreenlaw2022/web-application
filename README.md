@@ -7,17 +7,13 @@
 2. npm start
 
 ### Start Backend
-1. From Ubuntu: source venv/bin/activate
-2. cd src from web-application folder
-3. export FLASK_APP=App.py
-4. flask run --port=8000  
-***Note***: this project is configured to run the backend from port 8000 not 5000.
-
-"python3 -m venv venv
-source venv/bin/activate
-pip3 install -r requirements.txt
-python3 app.py"
-
+1. python3 -m venv venv
+2. source venv/bin/activate
+3. pip install -r requirements.txt
+4. cd src from web-application folder
+5. export FLASK_APP=App.py
+6. python -m flask run --port=8000  
+**Note**: this project is configured to run the backend from port 8000 not 5000.
 
 ## Project Information
 
