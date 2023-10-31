@@ -22,8 +22,6 @@ This project uses a combination of React and Flask to create a web application t
 
 [Loom Video Demonstration](https://www.loom.com/share/060c2ff24f544583bd4d5a33114eb478?sid=e84b5818-f486-4f05-8b63-2638ccea1240)
 
-**User Login Information**: usernames and email addresses are stored in the Users table. All passwords for the accounts are 123456
-
 ### Features
 
 1. **User authentication**: Users can create an account and log in and out
