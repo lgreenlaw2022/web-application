@@ -29,7 +29,7 @@ export default function Task({
 			}
 		};
 		fetchSubtasks();
-	}, []); // the task will not change so there is no need for later rerender
+	}, []);
 
 	// handleMove function to move task to new list
 	const handleMove = async (newListId) => {

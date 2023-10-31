@@ -31,7 +31,6 @@ export default function UserProvider({ children }) {
 		// If the login is successful, set the user in the state.
 		if (response.success) {
 			// If the login is successful, set the user in the state.
-
 			setUser(response.user);
 			sessionStorage.setItem("user", JSON.stringify(response.user));
 		} else {

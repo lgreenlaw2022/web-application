@@ -12,6 +12,8 @@ react-bootstrap=2.1.0
 #unsure about these ones
 fluentui-react=8.112.3
 
+python=3.10.0
+
 # "@testing-library/jest-dom": "^5.17.0",
 # "@testing-library/react": "^13.4.0",
 # "@testing-library/user-event": "^13.5.0",
